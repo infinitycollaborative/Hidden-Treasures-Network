@@ -1,0 +1,44 @@
+.mission {
+  background: white;
+  text-align: center;
+}
+
+.mission-title {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  position: relative;
+  display: inline-block;
+}
+
+.mission-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: var(--secondary-color);
+  border-radius: 2px;
+}
+
+.mission-statement {
+  font-size: 1.3rem;
+  line-height: 1.8;
+  color: var(--text-dark);
+  max-width: 900px;
+  margin: 0 auto;
+  margin-top: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .mission-title {
+    font-size: 2rem;
+  }
+
+  .mission-statement {
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+}
