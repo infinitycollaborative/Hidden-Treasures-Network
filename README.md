@@ -1,71 +1,218 @@
 # Hidden Treasures Network
 
-A modern, responsive website for Hidden Treasures Network - empowering the next generation through aviation and STEM education.
+A professional web application connecting aviation and STEM education organizations, mentors, students, and sponsors under a unified mission to impact one million lives by 2030.
 
-## About
+## 🎯 Mission
 
-Hidden Treasures Network is a program of Infinity Aero Club Tampa Bay, Inc., a 501(c)(3) nonprofit organization dedicated to inspiring, training, and launching the next generation of aviators and innovators.
+To empower underserved youth worldwide through aviation, STEM, and entrepreneurship education by creating a unified network that amplifies resources, shares knowledge, and multiplies impact across organizations.
 
-## Features
+## 🏢 Organization
 
-- **Hero Section**: Engaging headline with call-to-action buttons
-- **Animated Statistics**: Real-time counters showing impact metrics
-- **Mission Statement**: Clear communication of organizational goals
-- **Success Stories**: Testimonials from program participants
-- **Responsive Design**: Optimized for all devices (desktop, tablet, mobile)
-- **Smooth Animations**: Scroll-triggered animations for enhanced user experience
+**Parent Organization:** Infinity Aero Club Tampa Bay, Inc. (501c3 nonprofit)
+**Founder & CEO:** Ricardo "Tattoo" Foster, LCDR USN (Ret.)
+**Domain:** [HiddenTreasuresNetwork.org](https://hiddentreasuresnetwork.org)
 
-## Impact Stats
+## 🚀 Features
 
-- 50+ Partner Organizations
-- 200,000+ Youth Impacted
-- 25+ Countries Reached
-- 1,200+ Discovery Flights Completed
+- **Organization Profiles** - Showcase aviation and STEM programs globally
+- **Interactive World Map** - Discover and connect with partner organizations using Mapbox
+- **Impact Dashboard** - Track collective progress toward the 2030 goal with real-time analytics
+- **Resource Library** - Share curricula, lesson plans, and educational materials
+- **Mentor Matching** - Connect experienced professionals with aspiring students
+- **Sponsorship Platform** - Connect organizations with sponsors
+- **Authentication System** - Secure login with email/password and Google OAuth
 
-## Technology Stack
+## 🛠 Tech Stack
 
-- **HTML5**: Semantic markup
-- **CSS3**: Modern styling with CSS Grid, Flexbox, and animations
-- **Vanilla JavaScript**: Intersection Observer API for performance-optimized animations
-- **Google Fonts**: Inter font family for clean typography
+- **Framework:** Next.js 14 with App Router
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **UI Components:** Shadcn/ui
+- **Database:** Firebase Firestore
+- **Authentication:** Firebase Authentication
+- **Storage:** Firebase Storage
+- **Maps:** Mapbox GL JS
+- **Charts:** Recharts
+- **Forms:** React Hook Form + Zod
+- **Icons:** Lucide React
+- **Deployment:** Vercel
 
-## Project Structure
+## 📋 Prerequisites
+
+- Node.js 18+ and npm
+- Firebase account
+- Mapbox account (for map features)
+
+## 🔧 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/infinitycollaborative/Hidden-Treasures-Network.git
+   cd Hidden-Treasures-Network
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+
+   Create a `.env.local` file in the root directory:
+   ```env
+   # Firebase Configuration
+   NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key_here
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+   # Mapbox Configuration
+   NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=your_mapbox_token_here
+   ```
+
+4. **Firebase Setup**
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Create a new project
+   - Enable Authentication (Email/Password and Google)
+   - Create a Firestore Database
+   - Enable Storage
+   - Copy your config values to `.env.local`
+
+5. **Mapbox Setup**
+   - Go to [Mapbox](https://www.mapbox.com/)
+   - Create a free account
+   - Get your access token
+   - Add to `.env.local`
+
+## 🚀 Development
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+## 📦 Build
+
+Build the production application:
+
+```bash
+npm run build
+```
+
+## 🚢 Deployment
+
+### Deploy to Vercel
+
+1. Push your code to GitHub
+2. Import your repository in [Vercel](https://vercel.com)
+3. Add environment variables in Vercel project settings
+4. Deploy!
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/infinitycollaborative/Hidden-Treasures-Network)
+
+## 🎨 Brand Design
+
+### Color Palette
+
+- **Aviation Navy:** `#0A2540` - Primary brand color
+- **Aviation Sky:** `#0EA5E9` - Accent color
+- **Aviation Gold:** `#F59E0B` - Secondary accent
+- **Aviation Silver:** `#94A3B8` - Tertiary color
+- **Aviation Crimson:** `#DC2626` - Alert/emphasis color
+
+## 📁 Project Structure
 
 ```
 Hidden-Treasures-Network/
-├── index.html          # Main homepage
-├── styles.css          # All styling and responsive design
-├── script.js           # Interactive features and animations
-└── README.md           # Project documentation
+├── app/                    # Next.js app directory
+│   ├── about/             # About page
+│   ├── dashboard/         # User dashboard
+│   ├── impact/            # Impact tracking dashboard
+│   ├── login/             # Login page
+│   ├── map/               # Interactive world map
+│   ├── organizations/     # Organizations directory
+│   ├── register/          # Registration page
+│   ├── resources/         # Resource library
+│   ├── sponsors/          # Sponsorship page
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Home page
+│   └── globals.css        # Global styles
+├── components/
+│   ├── layout/            # Layout components (navbar, footer)
+│   ├── map/               # Map components
+│   └── ui/                # Shadcn UI components
+├── config/
+│   └── firebase.ts        # Firebase configuration
+├── lib/
+│   └── utils.ts           # Utility functions
+├── public/                # Static assets
+└── package.json           # Dependencies
 ```
 
-## Features in Detail
+## 🔐 Authentication
 
-### Animated Counters
-Statistics animate from 0 to their target values when scrolled into view, creating an engaging user experience.
+The platform supports:
+- Email/Password authentication
+- Google OAuth
+- Protected routes for authenticated users
 
-### Smooth Scrolling
-Navigation links smoothly scroll to their corresponding sections on the page.
+## 📊 Firestore Data Structure
 
-### Responsive Navigation
-Fixed navigation bar with smooth transitions and mobile-friendly design.
+```
+users/
+  {userId}/
+    - name
+    - email
+    - organizationName
+    - userType
+    - role
+    - createdAt
 
-### Success Stories
-Grid layout showcasing real testimonials from program participants with hover effects.
+organizations/
+  {orgId}/
+    - name
+    - location
+    - description
+    - programs
+    - studentsImpacted
+    - contactInfo
+    - createdAt
 
-## Browser Support
+resources/
+  {resourceId}/
+    - title
+    - description
+    - category
+    - fileUrl
+    - uploadedBy
+    - createdAt
+```
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
+## 🤝 Contributing
 
-## Contact
+We welcome contributions! Please feel free to submit issues and pull requests.
 
-- **Email**: info@hiddenttreasuresnetwork.org
-- **Phone**: (757) 353-8610
-- **Location**: Wesley Chapel, Florida, USA
+## 📝 License
 
-## License
+This project is owned by Infinity Aero Club Tampa Bay, Inc.
 
-© 2024 Hidden Treasures Network. All rights reserved.
+## 📧 Contact
+
+For questions or support, contact:
+- **Email:** info@hiddentreasuresnetwork.org
+- **Website:** [HiddenTreasuresNetwork.org](https://hiddentreasuresnetwork.org)
+
+## 🌟 Acknowledgments
+
+Special thanks to all aviation and STEM education organizations working tirelessly to inspire and empower the next generation.
+
+---
+
+**Mission: Impact One Million Lives by 2030**
+
+Built with ❤️ by the Hidden Treasures Network team
