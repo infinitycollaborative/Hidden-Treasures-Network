@@ -36,13 +36,17 @@ export default function CommunicationsPage() {
 
   async function handleSend() {
     try {
+      // TODO: Replace with actual admin context from useAuth or similar
+      // const { user, profile } = useAuth()
+      // const senderId = user?.uid || ''
+      // const senderName = profile?.displayName || 'Admin'
       await createAdminMessage({
         title: formData.title,
         content: formData.content,
         audience: formData.audience,
         deliveryChannels: formData.deliveryChannels,
-        senderId: 'admin-user-id', // TODO: Get from auth
-        senderName: 'Admin User',
+        senderId: 'admin-user-id', // TODO: Get from auth context
+        senderName: 'Admin User',  // TODO: Get from auth context
       })
       
       setShowComposer(false)

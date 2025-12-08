@@ -215,7 +215,7 @@ export async function addIncidentNote(
   const newNote: IncidentNote = {
     id: Date.now().toString(),
     ...note,
-    timestamp: new Date() as any,
+    timestamp: serverTimestamp() as any,
   }
   
   const notes = incident.notes || []

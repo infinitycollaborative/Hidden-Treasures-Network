@@ -53,10 +53,14 @@ export default function CompliancePage() {
     if (!selectedSubmission) return
 
     try {
+      // TODO: Replace with actual admin context from useAuth or similar
+      // const { user, profile } = useAuth()
+      // const adminId = user?.uid || ''
+      // const adminName = profile?.displayName || 'Admin'
       await approveComplianceSubmission(
         selectedSubmission.id,
         'admin-user-id', // TODO: Get from auth context
-        'Admin User',
+        'Admin User',    // TODO: Get from auth context
         reviewComments,
         expirationDate ? new Date(expirationDate) : undefined
       )
@@ -75,10 +79,11 @@ export default function CompliancePage() {
     if (!selectedSubmission) return
 
     try {
+      // TODO: Replace with actual admin context from useAuth or similar
       await rejectComplianceSubmission(
         selectedSubmission.id,
         'admin-user-id', // TODO: Get from auth context
-        'Admin User',
+        'Admin User',    // TODO: Get from auth context
         reviewComments
       )
       
