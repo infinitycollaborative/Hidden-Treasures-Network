@@ -20,11 +20,18 @@ const STATUSES: OrganizationStatus[] = ['approved', 'pending', 'active']
 export default function DirectoryPage() {
   const [organizations, setOrganizations] = useState<OrganizationRecord[]>([])
   const [allOrganizations, setAllOrganizations] = useState<OrganizationRecord[]>([])
-  const [filters, setFilters] = useState({
+  type FilterState = {
+    country: string
+    search: string
+    programTypes: ProgramType[]
+    statuses: OrganizationStatus[]
+  }
+
+  const [filters, setFilters] = useState<FilterState>({
     country: '',
     search: '',
-    programTypes: [] as ProgramType[],
-    statuses: [] as OrganizationStatus[],
+    programTypes: [],
+    statuses: [],
   })
   const [loading, setLoading] = useState(true)
 
@@ -58,10 +65,10 @@ export default function DirectoryPage() {
     setLoading(false)
   }
 
-  const toggleArray = async (field: 'programTypes' | 'statuses', value: any) => {
-    const next = filters[field].includes(value)
-      ? filters[field].filter((item: any) => item !== value)
-      : [...filters[field], value]
+  const toggleArray = async <K extends 'programTypes' | 'statuses'>(field: K, value: FilterState[K][number]) => {
+    const current = filters[field] as FilterState[K]
+    const list = current as Array<FilterState[K][number]>
+    const next = (list.includes(value) ? list.filter((item) => item !== value) : [...list, value]) as FilterState[K]
     await applyFilters({ ...filters, [field]: next })
   }
 
