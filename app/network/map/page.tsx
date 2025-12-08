@@ -21,11 +21,18 @@ const STATUSES: OrganizationStatus[] = ['approved', 'pending', 'active']
 export default function NetworkMapPage() {
   const [organizations, setOrganizations] = useState<OrganizationRecord[]>([])
   const [allOrganizations, setAllOrganizations] = useState<OrganizationRecord[]>([])
-  const [filters, setFilters] = useState({
+  type FilterState = {
+    country: string
+    search: string
+    programTypes: ProgramType[]
+    statuses: OrganizationStatus[]
+  }
+
+  const [filters, setFilters] = useState<FilterState>({
     country: '',
     search: '',
-    programTypes: [] as ProgramType[],
-    statuses: [] as OrganizationStatus[],
+    programTypes: [],
+    statuses: [],
   })
   const [showFilters, setShowFilters] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -49,8 +56,8 @@ export default function NetworkMapPage() {
     return Array.from(countries)
   }, [allOrganizations])
 
-  const handleFilterChange = async (key: string, value: any) => {
-    const updated = { ...filters, [key]: value }
+  const handleFilterChange = async <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
+    const updated = { ...filters, [key]: value } as FilterState
     setFilters(updated)
     setLoading(true)
     const results = await getOrganizationsByFilters({
@@ -63,9 +70,10 @@ export default function NetworkMapPage() {
     setLoading(false)
   }
 
-  const toggleArrayValue = async (field: 'programTypes' | 'statuses', value: any) => {
-    const current = filters[field]
-    const updated = current.includes(value) ? current.filter((item: any) => item !== value) : [...current, value]
+  const toggleArrayValue = async <K extends 'programTypes' | 'statuses'>(field: K, value: FilterState[K][number]) => {
+    const current = filters[field] as FilterState[K]
+    const list = current as Array<FilterState[K][number]>
+    const updated = (list.includes(value) ? list.filter((item) => item !== value) : [...list, value]) as FilterState[K]
     await handleFilterChange(field, updated)
   }
 

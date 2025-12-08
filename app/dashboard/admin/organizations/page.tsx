@@ -5,7 +5,14 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { deleteOrganization, getAllOrganizations, createOrganization, updateOrganization, OrganizationRecord } from '@/lib/db-organizations'
+import {
+  deleteOrganization,
+  getAllOrganizations,
+  createOrganization,
+  updateOrganization,
+  OrganizationRecord,
+  OrganizationStatus,
+} from '@/lib/db-organizations'
 import { useAuth } from '@/hooks/use-auth'
 import { storage } from '@/lib/firebase'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
@@ -177,7 +184,7 @@ export default function AdminOrganizationsPage() {
     setOrganizations(refreshed)
   }
 
-  const handleStatusChange = async (id: string, status: string) => {
+  const handleStatusChange = async (id: string, status: OrganizationStatus) => {
     await updateOrganization(id, { status })
     const refreshed = await getAllOrganizations()
     setOrganizations(refreshed)
@@ -225,11 +232,11 @@ export default function AdminOrganizationsPage() {
                         </div>
                       </td>
                       <td className="py-2">
-                        <select
-                          value={org.status}
-                          onChange={(e) => org.id && handleStatusChange(org.id, e.target.value)}
-                          className="rounded-md border px-2 py-1 text-sm"
-                        >
+                          <select
+                            value={org.status}
+                            onChange={(e) => org.id && handleStatusChange(org.id, e.target.value as OrganizationStatus)}
+                            className="rounded-md border px-2 py-1 text-sm"
+                          >
                           {statusOptions.map((status) => (
                             <option key={status} value={status}>
                               {status}
