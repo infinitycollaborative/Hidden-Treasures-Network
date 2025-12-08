@@ -3,7 +3,7 @@
 import { useAuth } from '@/hooks/use-auth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { GraduationCap, BookOpen, Users, Award, Calendar, TrendingUp } from 'lucide-react'
+import { GraduationCap, BookOpen, Users, Award, Calendar, TrendingUp, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 
 export default function StudentDashboard() {
@@ -45,6 +45,21 @@ export default function StudentDashboard() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="h-5 w-5" />
+                Messages
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">Connect with your mentors.</p>
+              <Link href="/messages">
+                <Button className="mt-4 bg-aviation-navy">View Messages</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

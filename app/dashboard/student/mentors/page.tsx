@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { MapPin, Languages, Star, TrendingUp } from 'lucide-react'
+import { MapPin, Languages, Star, TrendingUp, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -205,12 +205,20 @@ export default function FindMentorPage() {
                         )}
 
                         {/* Action Buttons */}
-                        <div className="grid grid-cols-2 gap-2 pt-2">
-                          <Link href={`/mentors/${mentor.uid}`}>
-                            <Button variant="outline" className="w-full">
-                              View Profile
-                            </Button>
-                          </Link>
+                        <div className="space-y-2 pt-2">
+                          <div className="grid grid-cols-2 gap-2">
+                            <Link href={`/mentors/${mentor.uid}`}>
+                              <Button variant="outline" className="w-full">
+                                View Profile
+                              </Button>
+                            </Link>
+                            <Link href={`/messages?with=${mentor.uid}`}>
+                              <Button variant="outline" className="w-full">
+                                <MessageSquare className="h-4 w-4 mr-1" />
+                                Message
+                              </Button>
+                            </Link>
+                          </div>
                           <Link href={`/dashboard/student/sessions/request?mentorId=${mentor.uid}`}>
                             <Button className="w-full bg-aviation-navy hover:bg-aviation-navy/90">
                               Request Session

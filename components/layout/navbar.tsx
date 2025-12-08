@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Menu, X, Plane } from "lucide-react"
+import { Menu, X, Plane, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { useAuth } from "@/hooks/use-auth"
@@ -52,17 +52,35 @@ export function Navbar() {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-3">
-            {isAuthenticated ? <NotificationBell /> : null}
-            <Link href="/login">
-              <Button variant="ghost" className="text-white hover:bg-aviation-sky/20">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button className="bg-aviation-gold hover:bg-aviation-gold/90 text-aviation-navy">
-                Join Network
-              </Button>
-            </Link>
+            {isAuthenticated && (
+              <>
+                <Link href="/messages">
+                  <Button variant="ghost" size="sm" className="text-white hover:bg-aviation-sky/20">
+                    <MessageSquare className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <NotificationBell />
+                <Link href="/dashboard">
+                  <Button variant="ghost" className="text-white hover:bg-aviation-sky/20">
+                    Dashboard
+                  </Button>
+                </Link>
+              </>
+            )}
+            {!isAuthenticated && (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" className="text-white hover:bg-aviation-sky/20">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="bg-aviation-gold hover:bg-aviation-gold/90 text-aviation-navy">
+                    Join Network
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -92,16 +110,34 @@ export function Navbar() {
               </Link>
             ))}
             <div className="pt-4 pb-2 space-y-2">
-              <Link href="/login" onClick={() => setIsOpen(false)}>
-                <Button variant="ghost" className="w-full text-white hover:bg-aviation-sky/20">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/register" onClick={() => setIsOpen(false)}>
-                <Button className="w-full bg-aviation-gold hover:bg-aviation-gold/90 text-aviation-navy">
-                  Join Network
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link href="/messages" onClick={() => setIsOpen(false)}>
+                    <Button variant="ghost" className="w-full text-white hover:bg-aviation-sky/20">
+                      <MessageSquare className="h-5 w-5 mr-2" />
+                      Messages
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard" onClick={() => setIsOpen(false)}>
+                    <Button variant="ghost" className="w-full text-white hover:bg-aviation-sky/20">
+                      Dashboard
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setIsOpen(false)}>
+                    <Button variant="ghost" className="w-full text-white hover:bg-aviation-sky/20">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/register" onClick={() => setIsOpen(false)}>
+                    <Button className="w-full bg-aviation-gold hover:bg-aviation-gold/90 text-aviation-navy">
+                      Join Network
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

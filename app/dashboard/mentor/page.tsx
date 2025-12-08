@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Users, MessageSquare, Calendar, TrendingUp } from 'lucide-react'
+import Link from 'next/link'
 
 export default function MentorDashboard() {
   const { profile } = useAuth()
@@ -22,6 +23,7 @@ export default function MentorDashboard() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
+          <Card><CardHeader><CardTitle className="flex items-center gap-2"><MessageSquare className="h-5 w-5" />Messages</CardTitle></CardHeader><CardContent><p className="text-gray-600">Connect with your students.</p><Link href="/messages"><Button className="mt-4 bg-aviation-navy">View Messages</Button></Link></CardContent></Card>
           <Card><CardHeader><CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" />My Students</CardTitle></CardHeader><CardContent><p className="text-gray-600">Manage your mentees and track their progress.</p><Button className="mt-4 bg-aviation-navy">View Students</Button></CardContent></Card>
           <Card><CardHeader><CardTitle className="flex items-center gap-2"><Calendar className="h-5 w-5" />Schedule</CardTitle></CardHeader><CardContent><p className="text-gray-600">Manage your availability and sessions.</p><Button className="mt-4 bg-aviation-navy">View Schedule</Button></CardContent></Card>
         </div>
