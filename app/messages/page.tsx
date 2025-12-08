@@ -3,13 +3,17 @@
 import { useAuth } from '@/hooks/use-auth'
 import { MessageThreadList } from '@/components/messaging/MessageThreadList'
 import { Card } from '@/components/ui/card'
-import { MessageSquare } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { MessageSquare, Loader2 } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { createThread, findThreadBetweenUsers } from '@/lib/db-messages'
 
 export default function MessagesPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const withUserId = searchParams.get('with')
+  const [creatingThread, setCreatingThread] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -17,10 +21,39 @@ export default function MessagesPage() {
     }
   }, [user, loading, router])
 
-  if (loading) {
+  useEffect(() => {
+    // If "with" parameter is present, create or find thread with that user
+    if (withUserId && user?.uid && !creatingThread) {
+      const initThread = async () => {
+        setCreatingThread(true)
+        try {
+          // Check if thread already exists
+          const existingThread = await findThreadBetweenUsers(user.uid, withUserId)
+          
+          if (existingThread) {
+            router.push(`/messages/${existingThread.id}`)
+          } else {
+            // Create new thread
+            const threadId = await createThread([user.uid, withUserId])
+            router.push(`/messages/${threadId}`)
+          }
+        } catch (error) {
+          console.error('Error creating/finding thread:', error)
+          setCreatingThread(false)
+        }
+      }
+      
+      initThread()
+    }
+  }, [withUserId, user?.uid, router, creatingThread])
+
+  if (loading || creatingThread) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div>Loading...</div>
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-aviation-sky" />
+          <p className="text-gray-600">{creatingThread ? 'Starting conversation...' : 'Loading...'}</p>
+        </div>
       </div>
     )
   }

@@ -10,7 +10,6 @@ import {
 import { getUserProfile } from '@/lib/auth'
 import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Loader2 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { MessageInput } from './MessageInput'
@@ -87,7 +86,7 @@ export function MessageView({ threadId, thread }: MessageViewProps) {
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+      <div className="flex-1 p-4 overflow-y-auto" ref={scrollRef}>
         <div className="space-y-4">
           {messages.length === 0 ? (
             <div className="text-center text-gray-500 py-8">
@@ -103,7 +102,7 @@ export function MessageView({ threadId, thread }: MessageViewProps) {
             ))
           )}
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Input */}
       <div className="border-t p-4 bg-white">
@@ -124,7 +123,9 @@ function MessageBubble({ message, isOwn }: MessageBubbleProps) {
       <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
         {!isOwn && (
           <Avatar className="h-8 w-8 mt-1">
-            <AvatarFallback className="text-xs">U</AvatarFallback>
+            <AvatarFallback>
+              <span className="text-xs">U</span>
+            </AvatarFallback>
           </Avatar>
         )}
         <div>
