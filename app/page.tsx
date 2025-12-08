@@ -2,6 +2,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { EmailCapture } from "@/components/marketing/EmailCapture"
+import { StructuredData, organizationSchema } from "@/components/seo/StructuredData"
 import {
   Plane,
   Users,
@@ -20,6 +22,7 @@ import {
 export default function HomePage() {
   return (
     <div className="flex flex-col">
+      <StructuredData data={organizationSchema} />
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-aviation-navy via-aviation-navy to-blue-900 text-white py-32 md:py-40 overflow-hidden">
         {/* Background Pattern */}
@@ -393,26 +396,14 @@ export default function HomePage() {
 
       {/* Newsletter Signup */}
       <section className="py-20 bg-gradient-to-br from-aviation-navy to-blue-900 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6">
-            Stay in the Loop
-          </h2>
-          <p className="text-xl text-gray-200 mb-8">
-            Join our newsletter to stay updated as we build a global movement in aviation & STEM education
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-6 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-aviation-gold"
-            />
-            <Button className="bg-aviation-gold hover:bg-aviation-gold/90 text-aviation-navy font-semibold px-8 py-3">
-              Subscribe
-            </Button>
-          </div>
-          <p className="text-sm text-gray-300 mt-4">
-            We respect your privacy. Unsubscribe at any time.
-          </p>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <EmailCapture
+            source="homepage"
+            title="Stay in the Loop"
+            description="Be the first to hear about new tour stops, scholarships, and opportunities as we build a global movement in aviation & STEM education."
+            buttonText="Subscribe"
+            className="text-center text-white"
+          />
         </div>
       </section>
     </div>

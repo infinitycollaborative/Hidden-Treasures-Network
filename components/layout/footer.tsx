@@ -28,34 +28,27 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-lg mb-4 text-aviation-gold">Quick Links</h3>
+            <h3 className="font-semibold text-lg mb-4 text-aviation-gold">Explore</h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="/about" className="hover:text-aviation-sky transition-colors">About Us</Link></li>
-              <li><Link href="/organizations" className="hover:text-aviation-sky transition-colors">Organizations</Link></li>
-              <li><Link href="/map" className="hover:text-aviation-sky transition-colors">Global Network</Link></li>
-              <li><Link href="/resources" className="hover:text-aviation-sky transition-colors">Resources</Link></li>
-              <li><Link href="/impact" className="hover:text-aviation-sky transition-colors">Impact Dashboard</Link></li>
+              <li><Link href="/programs" className="hover:text-aviation-sky transition-colors">Programs</Link></li>
+              <li><Link href="/events/tour" className="hover:text-aviation-sky transition-colors">Hidden Treasures Tour</Link></li>
+              <li><Link href="/impact" className="hover:text-aviation-sky transition-colors">Impact</Link></li>
+              <li><Link href="/sponsors" className="hover:text-aviation-sky transition-colors">Sponsors</Link></li>
+              <li><Link href="/blog" className="hover:text-aviation-sky transition-colors">Blog</Link></li>
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Get Involved */}
           <div>
-            <h3 className="font-semibold text-lg mb-4 text-aviation-gold">Contact</h3>
+            <h3 className="font-semibold text-lg mb-4 text-aviation-gold">Get Involved</h3>
             <ul className="space-y-2 text-sm">
-              <li className="flex items-center space-x-2">
-                <Mail className="h-4 w-4 text-aviation-sky" />
-                <a href="mailto:info@hiddentreasuresnetwork.org" className="hover:text-aviation-sky transition-colors">
-                  info@hiddentreasuresnetwork.org
-                </a>
-              </li>
-              <li className="flex items-center space-x-2">
-                <Phone className="h-4 w-4 text-aviation-sky" />
-                <span>Coming Soon</span>
-              </li>
-              <li className="flex items-center space-x-2">
-                <MapPin className="h-4 w-4 text-aviation-sky" />
-                <span>Tampa Bay, FL</span>
-              </li>
+              <li><Link href="/get-involved/students" className="hover:text-aviation-sky transition-colors">For Students</Link></li>
+              <li><Link href="/get-involved/mentors" className="hover:text-aviation-sky transition-colors">For Mentors</Link></li>
+              <li><Link href="/get-involved/organizations" className="hover:text-aviation-sky transition-colors">For Organizations</Link></li>
+              <li><Link href="/get-involved/sponsors" className="hover:text-aviation-sky transition-colors">For Sponsors</Link></li>
+              <li><Link href="/media" className="hover:text-aviation-sky transition-colors">Media & Press</Link></li>
+              <li><Link href="/contact" className="hover:text-aviation-sky transition-colors">Contact Us</Link></li>
             </ul>
           </div>
         </div>
