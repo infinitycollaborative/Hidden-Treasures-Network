@@ -8,10 +8,10 @@ export const MAPBOX_CONFIG = {
   accessToken: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '',
   style: 'mapbox://styles/mapbox/streets-v12', // Default style
   defaultCenter: {
-    lng: -82.4572, // Tampa Bay, FL (Infinity Aero Club headquarters)
-    lat: 27.9506,
+    lng: -98.35, // Centered on the U.S. while showing the globe
+    lat: 39.5,
   },
-  defaultZoom: 10,
+  defaultZoom: 1.75,
 }
 
 /**
