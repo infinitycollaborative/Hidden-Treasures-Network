@@ -230,7 +230,6 @@ export default function SponsorApplicationPage() {
                     <Select
                       value={formData.tierId}
                       onValueChange={(value) => handleSelectChange('tierId', value)}
-                      required
                     >
                       <SelectTrigger className="mt-2">
                         <SelectValue placeholder="Select a sponsorship tier" />

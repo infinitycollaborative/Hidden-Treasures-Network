@@ -216,12 +216,14 @@ export default function DonationForm({
         {/* Donation Type Toggle */}
         <div>
           <Label>Donation Type</Label>
-          <Tabs value={donationType} onValueChange={(v) => setDonationType(v as DonationType)} className="mt-2">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="one-time">One-Time</TabsTrigger>
-              <TabsTrigger value="monthly">Monthly</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="mt-2">
+            <Tabs value={donationType} onValueChange={(v) => setDonationType(v as DonationType)}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="one-time">One-Time</TabsTrigger>
+                <TabsTrigger value="monthly">Monthly</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
 
         {/* Preset Amounts */}

@@ -20,7 +20,3 @@ export async function sendEventConfirmationEmail(registration: EventRegistration
   const html = `<p>Hi ${registration.name},</p><p>You're registered for the event. We look forward to seeing you!</p>`
   return sendEmail({ to: registration.email, subject, html })
 }
-export async function sendEventConfirmationEmail(_registration: EventRegistration): Promise<void> {
-  // Placeholder for integration with email provider (Resend/SendGrid/etc.)
-  return Promise.resolve()
-}

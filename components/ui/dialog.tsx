@@ -13,6 +13,14 @@ const Dialog = ({ children, open, onOpenChange }: { children: React.ReactNode, o
   )
 }
 
+const DialogTrigger = ({ children, asChild, onClick }: { children: React.ReactNode, asChild?: boolean, onClick?: () => void }) => {
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children, { onClick } as any)
+  }
+  
+  return <div onClick={onClick}>{children}</div>
+}
+
 const DialogContent = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
   <div className={`p-6 ${className}`}>{children}</div>
 )
@@ -33,4 +41,4 @@ const DialogFooter = ({ children, className = "" }: { children: React.ReactNode,
   <div className={`mt-6 flex justify-end gap-2 ${className}`}>{children}</div>
 )
 
-export { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter }
+export { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter }

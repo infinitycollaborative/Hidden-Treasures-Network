@@ -21,19 +21,19 @@ export default function SponsorDashboard() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (profile?.id) {
+    if ((profile as any)?.uid) {
       loadDashboardData()
     }
   }, [profile])
 
   const loadDashboardData = async () => {
-    if (!profile?.id) return
+    if (!(profile as any)?.uid) return
 
     try {
       const [userDonations, total, userMetrics] = await Promise.all([
-        getDonationsByUser(profile.id),
-        calculateUserTotalDonations(profile.id),
-        getSponsorMetrics(profile.id),
+        getDonationsByUser((profile as any).uid),
+        calculateUserTotalDonations((profile as any).uid),
+        getSponsorMetrics((profile as any).uid),
       ])
 
       setDonations(userDonations)
@@ -143,15 +143,17 @@ export default function SponsorDashboard() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="activity" className="mb-8">
-          <TabsList>
+        <div className="mb-8">
+          <Tabs defaultValue="activity">
+            <TabsList>
             <TabsTrigger value="activity">Activity</TabsTrigger>
             <TabsTrigger value="impact">Impact Report</TabsTrigger>
             <TabsTrigger value="donations">Donations</TabsTrigger>
           </TabsList>
 
           {/* Activity Tab */}
-          <TabsContent value="activity" className="space-y-6">
+          <TabsContent value="activity">
+            <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
@@ -238,10 +240,12 @@ export default function SponsorDashboard() {
                 </CardContent>
               </Card>
             </div>
+            </div>
           </TabsContent>
 
           {/* Impact Report Tab */}
-          <TabsContent value="impact" className="space-y-6">
+          <TabsContent value="impact">
+            <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Your Impact Report</CardTitle>
@@ -301,6 +305,7 @@ export default function SponsorDashboard() {
                 )}
               </CardContent>
             </Card>
+            </div>
           </TabsContent>
 
           {/* Donations Tab */}
@@ -360,6 +365,7 @@ export default function SponsorDashboard() {
             </Card>
           </TabsContent>
         </Tabs>
+        </div>
 
         {/* Call to Action */}
         <Card className="bg-gradient-to-r from-aviation-navy to-blue-900 text-white">
