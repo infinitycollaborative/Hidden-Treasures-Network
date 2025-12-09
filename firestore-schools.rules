@@ -1,0 +1,320 @@
+// Phase 14: School & Classroom Integration - Firestore Security Rules
+// Add these rules to your main firestore.rules file
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isTeacher() {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher';
+    }
+
+    function isSchoolAdmin() {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'school_admin';
+    }
+
+    function isDistrictAdmin() {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'district_admin';
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin'];
+    }
+
+    function isEducationStaff() {
+      return isTeacher() || isSchoolAdmin() || isDistrictAdmin() || isAdmin();
+    }
+
+    // ============================================
+    // DISTRICTS COLLECTION
+    // ============================================
+
+    match /districts/{districtId} {
+      // District admins and super admins can read their district
+      allow read: if isDistrictAdmin() || isAdmin();
+
+      // Only super admins can create districts
+      allow create: if isAdmin();
+
+      // District admins can update their own district
+      // Super admins can update any district
+      allow update: if isAdmin() ||
+                       (isDistrictAdmin() &&
+                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.districtId == districtId);
+
+      // Only super admins can delete districts
+      allow delete: if isAdmin();
+    }
+
+    // ============================================
+    // SCHOOLS COLLECTION
+    // ============================================
+
+    match /schools/{schoolId} {
+      // Anyone authenticated can read active schools
+      allow read: if isAuthenticated() && resource.data.status == 'active';
+
+      // School and district admins can read their schools
+      allow read: if isSchoolAdmin() || isDistrictAdmin() || isAdmin();
+
+      // District admins can create schools in their district
+      // Super admins can create any school
+      allow create: if isAdmin() ||
+                       (isDistrictAdmin() &&
+                        request.resource.data.districtId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.districtId);
+
+      // School admins can update their school
+      // District admins can update schools in their district
+      allow update: if isAdmin() ||
+                       (isSchoolAdmin() &&
+                        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.schoolId == schoolId) ||
+                       (isDistrictAdmin() &&
+                        resource.data.districtId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.districtId);
+
+      // Only admins can delete schools
+      allow delete: if isAdmin();
+    }
+
+    // ============================================
+    // CLASSROOMS COLLECTION
+    // ============================================
+
+    match /classrooms/{classroomId} {
+      // Students can read classrooms they're enrolled in
+      // Teachers can read their own classrooms
+      // School/district admins can read classrooms in their schools
+      allow read: if isAuthenticated() && (
+        request.auth.uid in resource.data.studentIds ||
+        request.auth.uid == resource.data.teacherId ||
+        isSchoolAdmin() ||
+        isDistrictAdmin() ||
+        isAdmin()
+      );
+
+      // Teachers can create classrooms in their school
+      allow create: if isTeacher() &&
+                       request.resource.data.teacherId == request.auth.uid;
+
+      // Teachers can update their own classrooms
+      // School admins can update classrooms in their school
+      allow update: if (isTeacher() && resource.data.teacherId == request.auth.uid) ||
+                       isSchoolAdmin() ||
+                       isDistrictAdmin() ||
+                       isAdmin();
+
+      // Only teachers and admins can delete/archive classrooms
+      allow delete: if (isTeacher() && resource.data.teacherId == request.auth.uid) ||
+                       isSchoolAdmin() ||
+                       isAdmin();
+    }
+
+    // ============================================
+    // CLASSROOM ROSTER COLLECTION
+    // ============================================
+
+    match /classroomRoster/{rosterId} {
+      // Students can read their own roster entry
+      // Teachers can read roster for their classrooms
+      // Admins can read all
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.studentId ||
+        request.auth.uid == get(/databases/$(database)/documents/classrooms/$(resource.data.classroomId)).data.teacherId ||
+        isSchoolAdmin() ||
+        isDistrictAdmin() ||
+        isAdmin()
+      );
+
+      // Teachers can add students to their classrooms
+      allow create: if isTeacher() &&
+                       request.auth.uid == get(/databases/$(database)/documents/classrooms/$(request.resource.data.classroomId)).data.teacherId;
+
+      // Teachers can update roster for their classrooms
+      allow update: if isTeacher() &&
+                       request.auth.uid == get(/databases/$(database)/documents/classrooms/$(resource.data.classroomId)).data.teacherId;
+
+      // Only teachers and admins can remove students
+      allow delete: if (isTeacher() &&
+                        request.auth.uid == get(/databases/$(database)/documents/classrooms/$(resource.data.classroomId)).data.teacherId) ||
+                       isAdmin();
+    }
+
+    // ============================================
+    // CURRICULUM MODULES COLLECTION
+    // ============================================
+
+    match /curriculumModules/{moduleId} {
+      // All authenticated users can read published modules
+      allow read: if isAuthenticated() && resource.data.status == 'published';
+
+      // Teachers and admins can read all modules
+      allow read: if isEducationStaff();
+
+      // Only teachers and admins can create modules
+      allow create: if isEducationStaff();
+
+      // Creators and admins can update their modules
+      allow update: if isAdmin() ||
+                       (isEducationStaff() && request.auth.uid == resource.data.createdBy);
+
+      // Only admins can delete modules
+      allow delete: if isAdmin();
+    }
+
+    // ============================================
+    // MODULE ASSIGNMENTS COLLECTION
+    // ============================================
+
+    match /moduleAssignments/{assignmentId} {
+      // Students can read assignments for their classrooms
+      // Teachers can read assignments for their classrooms
+      allow read: if isAuthenticated() && (
+        request.auth.uid in get(/databases/$(database)/documents/classrooms/$(resource.data.classroomId)).data.studentIds ||
+        request.auth.uid == get(/databases/$(database)/documents/classrooms/$(resource.data.classroomId)).data.teacherId ||
+        isSchoolAdmin() ||
+        isAdmin()
+      );
+
+      // Teachers can create assignments for their classrooms
+      allow create: if isTeacher() &&
+                       request.auth.uid == get(/databases/$(database)/documents/classrooms/$(request.resource.data.classroomId)).data.teacherId;
+
+      // Teachers can update their assignments
+      allow update: if isTeacher() &&
+                       request.auth.uid == resource.data.assignedBy;
+
+      // Teachers and admins can delete assignments
+      allow delete: if (isTeacher() && request.auth.uid == resource.data.assignedBy) ||
+                       isAdmin();
+    }
+
+    // ============================================
+    // STUDENT PROGRESS COLLECTION
+    // ============================================
+
+    match /studentProgress/{progressId} {
+      // Students can read their own progress
+      // Teachers can read progress for their classroom students
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.studentId ||
+        request.auth.uid == get(/databases/$(database)/documents/classrooms/$(resource.data.classroomId)).data.teacherId ||
+        isSchoolAdmin() ||
+        isAdmin()
+      );
+
+      // Students can create their own progress records
+      allow create: if isAuthenticated() &&
+                       request.resource.data.studentId == request.auth.uid;
+
+      // Students can update their own progress (submissions)
+      // Teachers can update progress (grading)
+      allow update: if (request.auth.uid == resource.data.studentId && resource.data.status != 'graded') ||
+                       (isTeacher() && request.auth.uid == get(/databases/$(database)/documents/classrooms/$(resource.data.classroomId)).data.teacherId);
+
+      // Only admins can delete progress
+      allow delete: if isAdmin();
+    }
+
+    // ============================================
+    // PARENTAL CONSENT COLLECTION (FERPA)
+    // ============================================
+
+    match /parentalConsent/{consentId} {
+      // Parents can read their own consents (via verification token)
+      // Teachers can read consents for their students
+      // School/district admins can read all consents
+      allow read: if isAuthenticated() && (
+        isEducationStaff() ||
+        isAdmin()
+      );
+
+      // Teachers and school admins can request consent
+      allow create: if isEducationStaff();
+
+      // Only the parent (via token) or admins can update consent status
+      // Teachers cannot modify consent after creation
+      allow update: if isAdmin() ||
+                       (request.resource.data.verificationToken == resource.data.verificationToken);
+
+      // Only admins can delete consents
+      allow delete: if isAdmin();
+    }
+  }
+}
+
+// ============================================
+// DATA PRIVACY & FERPA COMPLIANCE NOTES
+// ============================================
+
+/*
+  FERPA (Family Educational Rights and Privacy Act) Requirements:
+
+  1. Student Educational Records Protection:
+     - Student progress, grades, and attendance are protected
+     - Only authorized personnel (teachers, school admins) can access
+     - Parents must provide consent for data sharing
+
+  2. Parental Rights:
+     - Parents have the right to inspect student records
+     - Parents must consent to data collection for students under 13
+     - Parents can revoke consent at any time
+
+  3. Access Controls:
+     - Teachers can only access students in their classrooms
+     - School admins can access students in their school
+     - District admins can access students in their district
+     - Students can access their own records only
+
+  4. Data Minimization:
+     - Collect only necessary data
+     - Store data securely
+     - Delete data when no longer needed (per district retention policy)
+
+  5. Third-Party Sharing:
+     - Parental consent required for sharing with third parties
+     - Explicit permission tracking in ParentalConsent.permissions
+     - No data sharing without documented consent
+
+  COPPA (Children's Online Privacy Protection Act) Compliance:
+     - Verifiable parental consent for children under 13
+     - Clear privacy policy disclosure
+     - Parental access to child's information
+     - Parental ability to delete child's information
+*/
+
+// ============================================
+// DEPLOYMENT CHECKLIST
+// ============================================
+
+/*
+  Before deploying to production:
+
+  ✓ Merge these rules into firestore.rules
+  ✓ Review all permission checks
+  ✓ Test with Firebase Emulator Suite
+  ✓ Verify FERPA compliance with legal team
+  ✓ Set up parental consent email workflows
+  ✓ Configure background check verification
+  ✓ Implement data retention policies
+  ✓ Create privacy policy and terms of service
+  ✓ Train staff on FERPA requirements
+  ✓ Set up incident response procedures
+
+  Deploy:
+    firebase deploy --only firestore:rules
+*/
