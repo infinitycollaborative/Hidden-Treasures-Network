@@ -24,9 +24,6 @@ export interface EventFilters {
   isHiddenTreasuresTourStop?: boolean
 }
 
-const eventsCollection = collection(db, 'events')
-const registrationsCollection = collection(db, 'eventRegistrations')
-
 function mapEvent(snapshot: any): Event {
   const data = snapshot.data() || {}
   return {
@@ -75,6 +72,10 @@ function mapRegistration(snapshot: any): EventRegistration {
 }
 
 export async function getUpcomingEvents(filters?: EventFilters): Promise<Event[]> {
+  if (!db) {
+    return []
+  }
+  const eventsCollection = collection(db, 'events')
   const constraints = [orderBy('startDate', 'asc')] as any[]
 
   if (filters?.type) constraints.push(where('type', '==', filters.type))
@@ -90,6 +91,10 @@ export async function getUpcomingEvents(filters?: EventFilters): Promise<Event[]
 }
 
 export async function getEventsByMonth(month: string, year: number): Promise<Event[]> {
+  if (!db) {
+    return []
+  }
+  const eventsCollection = collection(db, 'events')
   const start = new Date(year, Number(month) - 1, 1)
   const end = new Date(year, Number(month), 1)
   const constraints = [where('startDate', '>=', start), where('startDate', '<', end), orderBy('startDate', 'asc')]
@@ -98,17 +103,28 @@ export async function getEventsByMonth(month: string, year: number): Promise<Eve
 }
 
 export async function getEventsByOrganizer(organizerId: string): Promise<Event[]> {
+  if (!db) {
+    return []
+  }
+  const eventsCollection = collection(db, 'events')
   const snapshot = await getDocs(query(eventsCollection, where('organizerId', '==', organizerId), orderBy('startDate', 'desc')))
   return snapshot.docs.map(mapEvent)
 }
 
 export async function getEventById(eventId: string): Promise<Event | null> {
+  if (!db) {
+    return null
+  }
   const snapshot = await getDoc(doc(db, 'events', eventId))
   if (!snapshot.exists()) return null
   return mapEvent(snapshot)
 }
 
 export async function createEvent(data: Partial<Event>): Promise<Event> {
+  if (!db) {
+    throw new Error('Firebase not configured')
+  }
+  const eventsCollection = collection(db, 'events')
   const docRef = data.id ? doc(eventsCollection, data.id) : doc(eventsCollection)
   await setDoc(docRef, {
     ...data,
@@ -128,6 +144,9 @@ export async function createEvent(data: Partial<Event>): Promise<Event> {
 }
 
 export async function updateEvent(eventId: string, data: Partial<Event>): Promise<void> {
+  if (!db) {
+    return
+  }
   await setDoc(
     doc(db, 'events', eventId),
     {
@@ -139,10 +158,17 @@ export async function updateEvent(eventId: string, data: Partial<Event>): Promis
 }
 
 export async function deleteEvent(eventId: string): Promise<void> {
+  if (!db) {
+    return
+  }
   await deleteDoc(doc(db, 'events', eventId))
 }
 
 export async function getRegistrationsForEvent(eventId: string): Promise<EventRegistration[]> {
+  if (!db) {
+    return []
+  }
+  const registrationsCollection = collection(db, 'eventRegistrations')
   const snapshot = await getDocs(
     query(registrationsCollection, where('eventId', '==', eventId), orderBy('createdAt', 'desc'))
   )
@@ -153,6 +179,10 @@ export async function createRegistration(
   eventId: string,
   data: Partial<EventRegistration>
 ): Promise<EventRegistration> {
+  if (!db) {
+    throw new Error('Firebase not configured')
+  }
+  const registrationsCollection = collection(db, 'eventRegistrations')
   const event = await getEventById(eventId)
   const isVolunteer = data.role === 'volunteer'
   const isAtCapacity = event?.capacity !== undefined && (event.registeredCount || 0) >= event.capacity
@@ -182,6 +212,9 @@ export async function updateRegistration(
   registrationId: string,
   data: Partial<EventRegistration>
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   await setDoc(
     doc(db, 'eventRegistrations', registrationId),
     {
@@ -193,6 +226,9 @@ export async function updateRegistration(
 }
 
 export async function cancelRegistration(registrationId: string): Promise<void> {
+  if (!db) {
+    return
+  }
   await updateDoc(doc(db, 'eventRegistrations', registrationId), {
     status: 'cancelled',
     updatedAt: serverTimestamp(),
@@ -200,6 +236,9 @@ export async function cancelRegistration(registrationId: string): Promise<void> 
 }
 
 export async function checkInRegistration(registrationId: string): Promise<void> {
+  if (!db) {
+    return
+  }
   await updateDoc(doc(db, 'eventRegistrations', registrationId), {
     status: 'checked_in',
     updatedAt: serverTimestamp(),
@@ -207,6 +246,10 @@ export async function checkInRegistration(registrationId: string): Promise<void>
 }
 
 export async function getUserRegistrations(userId: string): Promise<EventRegistration[]> {
+  if (!db) {
+    return []
+  }
+  const registrationsCollection = collection(db, 'eventRegistrations')
   const snapshot = await getDocs(
     query(registrationsCollection, where('userId', '==', userId), orderBy('createdAt', 'desc'))
   )

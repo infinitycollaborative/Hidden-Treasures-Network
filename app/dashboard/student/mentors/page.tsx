@@ -39,6 +39,11 @@ export default function FindMentorPage() {
   }, [currentProfile, authLoading])
 
   async function fetchAndMatchMentors() {
+    if (!db) {
+      setLoading(false)
+      return
+    }
+    
     try {
       // Fetch all mentors who accept new mentees
       const q = query(
@@ -63,13 +68,13 @@ export default function FindMentorPage() {
         const studentForMatching: UserProfile = {
           uid: currentProfile.uid,
           email: currentProfile.email,
-          role: currentProfile.role as any,
+          role: currentProfile.role as UserProfile['role'],
           firstName: currentProfile.displayName?.split(' ')[0] || '',
           lastName: currentProfile.displayName?.split(' ')[1] || '',
           displayName: currentProfile.displayName,
           location: currentProfile.location,
-          createdAt: currentProfile.createdAt as any,
-          updatedAt: currentProfile.createdAt as any,
+          createdAt: currentProfile.createdAt,
+          updatedAt: currentProfile.createdAt,
           profileComplete: true,
         }
         const matches = await computeMentorMatchScores({
@@ -112,11 +117,11 @@ export default function FindMentorPage() {
         </div>
 
         {/* Profile Notice */}
-        {!(currentProfile as any)?.studentProfile?.interests?.length && (
+        {currentProfile && !(currentProfile as unknown as Record<string, unknown>)?.studentProfile && (
           <Card className="mb-6 border-aviation-gold">
             <CardContent className="py-4">
               <p className="text-gray-700">
-                💡 <strong>Tip:</strong> Complete your student profile with your interests and goals to get better mentor matches!
+                <strong>Tip:</strong> Complete your student profile with your interests and goals to get better mentor matches!
               </p>
               <Link href="/dashboard/settings">
                 <Button variant="outline" className="mt-3">
@@ -170,7 +175,7 @@ export default function FindMentorPage() {
                           <ul className="space-y-1">
                             {match.reasons.slice(0, 3).map((reason, idx) => (
                               <li key={idx} className="text-sm text-gray-600 flex items-start gap-1">
-                                <span className="text-green-600 mt-0.5">✓</span>
+                                <span className="text-green-600 mt-0.5">&#10003;</span>
                                 <span>{reason}</span>
                               </li>
                             ))}
@@ -213,7 +218,7 @@ export default function FindMentorPage() {
                         {/* Availability */}
                         {profile.availability && profile.availability.length > 0 && (
                           <p className="text-sm text-gray-600">
-                            📅 {formatAvailabilitySummary(mentor)}
+                            {formatAvailabilitySummary(mentor)}
                           </p>
                         )}
 

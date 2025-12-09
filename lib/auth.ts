@@ -8,7 +8,7 @@ import {
   User,
 } from 'firebase/auth'
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
-import { auth, db } from './firebase'
+import { auth, db, isFirebaseConfigured } from './firebase'
 import { UserRole } from '@/types'
 
 export interface SignUpData {
@@ -46,6 +46,10 @@ export interface UserProfile {
  * Sign up a new user with email and password
  */
 export async function signUpWithEmail(data: SignUpData): Promise<User> {
+  if (!auth || !db) {
+    throw new Error('Firebase is not configured')
+  }
+  
   try {
     // Create auth user
     const userCredential = await createUserWithEmailAndPassword(
@@ -83,6 +87,10 @@ export async function signInWithEmail(
   email: string,
   password: string
 ): Promise<User> {
+  if (!auth || !db) {
+    throw new Error('Firebase is not configured')
+  }
+  
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
 
@@ -103,6 +111,10 @@ export async function signInWithEmail(
  * Sign in with Google (placeholder for future implementation)
  */
 export async function signInWithGoogle(): Promise<User> {
+  if (!auth || !db) {
+    throw new Error('Firebase is not configured')
+  }
+  
   try {
     const provider = new GoogleAuthProvider()
     const userCredential = await signInWithPopup(auth, provider)
@@ -142,6 +154,10 @@ export async function signInWithGoogle(): Promise<User> {
  * Sign out current user
  */
 export async function logOut(): Promise<void> {
+  if (!auth) {
+    throw new Error('Firebase is not configured')
+  }
+  
   try {
     await signOut(auth)
   } catch (error: any) {
@@ -153,6 +169,10 @@ export async function logOut(): Promise<void> {
  * Send password reset email
  */
 export async function resetPassword(email: string): Promise<void> {
+  if (!auth) {
+    throw new Error('Firebase is not configured')
+  }
+  
   try {
     await sendPasswordResetEmail(auth, email)
   } catch (error: any) {
@@ -164,6 +184,10 @@ export async function resetPassword(email: string): Promise<void> {
  * Get user profile from Firestore
  */
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
+  if (!db) {
+    return null
+  }
+  
   try {
     const userDoc = await getDoc(doc(db, 'users', uid))
     if (userDoc.exists()) {

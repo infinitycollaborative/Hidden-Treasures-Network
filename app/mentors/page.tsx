@@ -23,6 +23,11 @@ export default function MentorsPage() {
   }, [])
 
   async function fetchMentors() {
+    if (!db) {
+      setLoading(false)
+      return
+    }
+    
     try {
       const q = query(
         collection(db, 'users'),
@@ -223,7 +228,7 @@ export default function MentorsPage() {
                     <div className="pt-2">
                       {profile.acceptsNewMentees ? (
                         <p className="text-sm text-green-600 font-medium">
-                          ✓ Accepting new mentees
+                          Accepting new mentees
                         </p>
                       ) : (
                         <p className="text-sm text-gray-500">

@@ -44,7 +44,7 @@ export default function NotificationSettingsPage() {
 
   useEffect(() => {
     const loadPreferences = async () => {
-      if (!user?.uid) return
+      if (!user?.uid || !db) return
       const snapshot = await getDoc(doc(db, 'users', user.uid))
       const prefs = snapshot.data()?.notificationPreferences as NotificationPreferences | undefined
       if (prefs) {
@@ -55,7 +55,7 @@ export default function NotificationSettingsPage() {
   }, [user?.uid, form])
 
   const onSubmit = async (data: NotificationPreferences) => {
-    if (!user?.uid) return
+    if (!user?.uid || !db) return
     setLoading(true)
     setSaved(false)
     await updateDoc(doc(db, 'users', user.uid), { notificationPreferences: data })

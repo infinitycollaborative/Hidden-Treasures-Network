@@ -3,7 +3,9 @@ import { db } from './firebase'
 import { OrgImpactMetrics } from './db-metrics'
 
 export async function recalculateNetworkMetrics(): Promise<void> {
-  const orgMetricsQuery = query(collection(db, 'orgImpactMetrics'), orderBy('month', 'asc'))
+  if (!db) return
+  const firestore = db
+  const orgMetricsQuery = query(collection(firestore, 'orgImpactMetrics'), orderBy('month', 'asc'))
   const snapshot = await getDocs(orgMetricsQuery)
 
   const monthlyAggregation: Record<
@@ -59,7 +61,7 @@ export async function recalculateNetworkMetrics(): Promise<void> {
   )
 
   await setDoc(
-    doc(db, 'metrics', 'network'),
+    doc(firestore, 'metrics', 'network'),
     {
       ...totals,
       lastUpdated: serverTimestamp(),
@@ -71,7 +73,7 @@ export async function recalculateNetworkMetrics(): Promise<void> {
   await Promise.all(
     monthlySnapshots.map(([month, values]) =>
       setDoc(
-        doc(db, 'networkMonthlyMetrics', month),
+        doc(firestore, 'networkMonthlyMetrics', month),
         {
           ...values,
           month,

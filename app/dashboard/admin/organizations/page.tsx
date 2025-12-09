@@ -90,6 +90,7 @@ export default function AdminOrganizationsPage() {
   }, [])
 
   const uploadAsset = async (path: string, file: File) => {
+    if (!storage) throw new Error('Storage not configured')
     const storageRef = ref(storage, path)
     await uploadBytes(storageRef, file)
     return getDownloadURL(storageRef)

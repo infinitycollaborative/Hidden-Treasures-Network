@@ -22,11 +22,11 @@ export default function TeacherDashboard() {
 
   useEffect(() => {
     async function loadTeacherData() {
-      if (!profile?.id || profile.role !== 'teacher') return
+      if (!profile?.uid || profile.role !== 'teacher') return
 
       try {
         // Get teacher's classrooms
-        const teacherClassrooms = await getClassroomsByTeacher(profile.id)
+        const teacherClassrooms = await getClassroomsByTeacher(profile.uid)
         setClassrooms(teacherClassrooms)
 
         // Calculate stats
@@ -52,7 +52,7 @@ export default function TeacherDashboard() {
     }
 
     loadTeacherData()
-  }, [profile?.id, profile?.role])
+  }, [profile?.uid, profile?.role])
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>
@@ -66,7 +66,7 @@ export default function TeacherDashboard() {
     )
   }
 
-  const teacherProfile = profile as TeacherProfile
+  const teacherProfile = profile as unknown as TeacherProfile
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

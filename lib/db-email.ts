@@ -24,6 +24,7 @@ export async function addEmailSubscriber(
   email: string,
   source: string = 'unknown'
 ): Promise<void> {
+  if (!db) throw new Error('Firebase not configured')
   // Check if email already exists
   const existingQuery = query(
     collection(db, 'emailSubscribers'),
@@ -47,6 +48,7 @@ export async function addEmailSubscriber(
  * Get all active email subscribers
  */
 export async function getActiveSubscribers(): Promise<EmailSubscriber[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'emailSubscribers'),
     where('active', '==', true)

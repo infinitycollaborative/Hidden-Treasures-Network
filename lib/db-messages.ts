@@ -27,6 +27,7 @@ const MESSAGES_COLLECTION = 'messages'
  * Get all threads for a user
  */
 export async function getThreadsForUser(userId: string): Promise<MessageThread[]> {
+  if (!db) return []
   try {
     const q = query(
       collection(db, THREADS_COLLECTION),
@@ -55,6 +56,7 @@ export async function createThread(
   participantIds: string[],
   relatedSessionId?: string
 ): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   try {
     if (participantIds.length !== 2) {
       throw new Error('Threads must have exactly 2 participants')
@@ -88,6 +90,7 @@ export async function findThreadBetweenUsers(
   userId1: string,
   userId2: string
 ): Promise<MessageThread | null> {
+  if (!db) return null
   try {
     const q = query(
       collection(db, THREADS_COLLECTION),
@@ -114,6 +117,7 @@ export async function findThreadBetweenUsers(
  * Get all messages for a thread
  */
 export async function getMessagesForThread(threadId: string): Promise<Message[]> {
+  if (!db) return []
   try {
     const q = query(
       collection(db, MESSAGES_COLLECTION),
@@ -143,6 +147,7 @@ export async function sendMessage(
   senderId: string,
   body: string
 ): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   try {
     // Create the message
     const messageData = {
@@ -174,6 +179,7 @@ export async function sendMessage(
  * Mark a thread as read by a user
  */
 export async function markThreadRead(threadId: string, userId: string): Promise<void> {
+  if (!db) return
   try {
     // Get all unread messages in this thread for this user
     const q = query(
@@ -205,6 +211,7 @@ export async function markThreadRead(threadId: string, userId: string): Promise<
  * Get thread by ID
  */
 export async function getThreadById(threadId: string): Promise<MessageThread | null> {
+  if (!db) return null
   try {
     const docRef = doc(db, THREADS_COLLECTION, threadId)
     const docSnap = await getDoc(docRef)
@@ -227,6 +234,10 @@ export function subscribeToThread(
   threadId: string,
   callback: (thread: MessageThread | null) => void
 ) {
+  if (!db) {
+    callback(null)
+    return () => {}
+  }
   const threadRef = doc(db, THREADS_COLLECTION, threadId)
   
   return onSnapshot(threadRef, 
@@ -251,6 +262,10 @@ export function subscribeToMessages(
   threadId: string,
   callback: (messages: Message[]) => void
 ) {
+  if (!db) {
+    callback([])
+    return () => {}
+  }
   const q = query(
     collection(db, MESSAGES_COLLECTION),
     where('threadId', '==', threadId),

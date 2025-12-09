@@ -35,6 +35,7 @@ export interface BlogPost {
 export async function getPublishedPosts(
   limitCount: number = 20
 ): Promise<BlogPost[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'blogPosts'),
     where('published', '==', true),
@@ -53,6 +54,7 @@ export async function getPublishedPosts(
  * Get a single blog post by slug
  */
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
+  if (!db) return null
   const q = query(
     collection(db, 'blogPosts'),
     where('slug', '==', slug),
@@ -74,6 +76,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
  * Get a single blog post by ID
  */
 export async function getPostById(id: string): Promise<BlogPost | null> {
+  if (!db) return null
   const docRef = doc(db, 'blogPosts', id)
   const docSnap = await getDoc(docRef)
 
@@ -89,6 +92,7 @@ export async function getPostById(id: string): Promise<BlogPost | null> {
  * Increment post view count
  */
 export async function incrementPostViews(postId: string): Promise<void> {
+  if (!db) return
   const postRef = doc(db, 'blogPosts', postId)
   const postSnap = await getDoc(postRef)
 
@@ -104,6 +108,7 @@ export async function incrementPostViews(postId: string): Promise<void> {
  * Create a new blog post (admin only)
  */
 export async function createBlogPost(data: Omit<BlogPost, 'id'>): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   const docRef = await addDoc(collection(db, 'blogPosts'), {
     ...data,
     publishedAt: serverTimestamp(),
@@ -120,6 +125,7 @@ export async function getPostsByTag(
   tag: string,
   limitCount: number = 20
 ): Promise<BlogPost[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'blogPosts'),
     where('tags', 'array-contains', tag),

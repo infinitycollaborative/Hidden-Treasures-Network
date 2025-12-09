@@ -32,6 +32,7 @@ export async function submitContactMessage(data: {
   role?: string
   message: string
 }): Promise<void> {
+  if (!db) throw new Error('Firebase not configured')
   await addDoc(collection(db, 'contactMessages'), {
     ...data,
     createdAt: serverTimestamp(),
@@ -45,6 +46,7 @@ export async function submitContactMessage(data: {
 export async function getContactMessages(
   limitCount: number = 50
 ): Promise<ContactMessage[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'contactMessages'),
     orderBy('createdAt', 'desc'),
@@ -62,6 +64,7 @@ export async function getContactMessages(
  * Get unread contact messages count
  */
 export async function getUnreadMessagesCount(): Promise<number> {
+  if (!db) return 0
   const q = query(
     collection(db, 'contactMessages'),
     where('status', '==', 'new')

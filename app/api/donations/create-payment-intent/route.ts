@@ -41,24 +41,26 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Store donation record in Firestore
-    const donationData = {
-      userId: donorId || null,
-      amount,
-      currency: 'usd',
-      type: donationType,
-      sponsorTier: sponsorTier || null,
-      status: 'pending',
-      paymentIntentId: paymentIntent.id,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-      metadata: {
-        email: email || '',
-        name: name || '',
-      },
-    }
+    // Store donation record in Firestore if db is configured
+    if (db) {
+      const donationData = {
+        userId: donorId || null,
+        amount,
+        currency: 'usd',
+        type: donationType,
+        sponsorTier: sponsorTier || null,
+        status: 'pending',
+        paymentIntentId: paymentIntent.id,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        metadata: {
+          email: email || '',
+          name: name || '',
+        },
+      }
 
-    await addDoc(collection(db, 'donations'), donationData)
+      await addDoc(collection(db, 'donations'), donationData)
+    }
 
     const response: CreatePaymentIntentResponse = {
       clientSecret: paymentIntent.client_secret!,

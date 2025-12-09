@@ -23,10 +23,6 @@ export interface OrgImpactMetrics {
   updatedAt: Date
 }
 
-const networkMetricsDoc = doc(db, 'metrics', 'network')
-const orgMetricsCollection = collection(db, 'orgImpactMetrics')
-const networkMonthlyCollection = collection(db, 'networkMonthlyMetrics')
-
 function mapNetworkMetrics(snapshot: any): NetworkImpactMetrics | null {
   if (!snapshot.exists()) return null
   const data = snapshot.data()
@@ -57,6 +53,10 @@ function mapOrgMetrics(snapshot: any): OrgImpactMetrics {
 }
 
 export async function getNetworkImpactMetrics(): Promise<NetworkImpactMetrics | null> {
+  if (!db) {
+    return null
+  }
+  const networkMetricsDoc = doc(db, 'metrics', 'network')
   const snapshot = await getDoc(networkMetricsDoc)
   return mapNetworkMetrics(snapshot)
 }
@@ -64,6 +64,10 @@ export async function getNetworkImpactMetrics(): Promise<NetworkImpactMetrics | 
 export async function updateNetworkImpactMetrics(
   data: Partial<Omit<NetworkImpactMetrics, 'id' | 'lastUpdated'>>
 ): Promise<void> {
+  if (!db) {
+    return
+  }
+  const networkMetricsDoc = doc(db, 'metrics', 'network')
   await setDoc(
     networkMetricsDoc,
     {
@@ -75,6 +79,10 @@ export async function updateNetworkImpactMetrics(
 }
 
 export async function getOrgImpactMetrics(orgId: string): Promise<OrgImpactMetrics[]> {
+  if (!db) {
+    return []
+  }
+  const orgMetricsCollection = collection(db, 'orgImpactMetrics')
   const metricsQuery = query(orgMetricsCollection, where('orgId', '==', orgId), orderBy('month', 'asc'))
   const snapshot = await getDocs(metricsQuery)
   return snapshot.docs.map(mapOrgMetrics)
@@ -84,6 +92,9 @@ export async function updateOrgImpactMetrics(
   orgId: string,
   data: Omit<OrgImpactMetrics, 'orgId' | 'updatedAt'>
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docId = `${orgId}-${data.month}`
   const metricDoc = doc(db, 'orgImpactMetrics', docId)
 
@@ -99,6 +110,10 @@ export async function updateOrgImpactMetrics(
 }
 
 export async function getMonthlyNetworkMetrics(): Promise<OrgImpactMetrics[]> {
+  if (!db) {
+    return []
+  }
+  const networkMonthlyCollection = collection(db, 'networkMonthlyMetrics')
   const monthlyQuery = query(networkMonthlyCollection, orderBy('month', 'asc'))
   const snapshot = await getDocs(monthlyQuery)
   return snapshot.docs.map(mapOrgMetrics)

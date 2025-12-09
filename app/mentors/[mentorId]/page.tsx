@@ -38,6 +38,11 @@ export default function MentorProfilePage() {
   }, [mentorId])
 
   async function fetchMentor() {
+    if (!db) {
+      setLoading(false)
+      return
+    }
+    
     try {
       const docRef = doc(db, 'users', mentorId)
       const docSnap = await getDoc(docRef)
@@ -110,7 +115,7 @@ export default function MentorProfilePage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <Link href="/mentors">
-            <Button variant="outline">← Back to Directory</Button>
+            <Button variant="outline">Back to Directory</Button>
           </Link>
         </div>
 
@@ -234,7 +239,7 @@ export default function MentorProfilePage() {
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">Session Type</h3>
                 <p className="text-gray-700">
-                  {profile.virtualOnly ? '💻 Virtual sessions only' : '🤝 Virtual and in-person sessions'}
+                  {profile.virtualOnly ? 'Virtual sessions only' : 'Virtual and in-person sessions'}
                 </p>
                 {profile.inPersonRegions && profile.inPersonRegions.length > 0 && (
                   <p className="text-sm text-gray-600 mt-1">

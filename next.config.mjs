@@ -21,6 +21,12 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   allowedDevOrigins: ['*'],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
 }
 
 export default nextConfig

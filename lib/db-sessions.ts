@@ -31,6 +31,7 @@ export async function createMentorSessionRequest(data: {
   topic?: string
   notes?: string
 }): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   try {
     const sessionData = {
       ...data,
@@ -51,6 +52,7 @@ export async function createMentorSessionRequest(data: {
  * Get all sessions for a specific user (as student or mentor)
  */
 export async function getSessionsForUser(userId: string): Promise<MentorSession[]> {
+  if (!db) return []
   try {
     // Query for sessions where user is either student or mentor
     const studentQuery = query(
@@ -96,6 +98,7 @@ export async function getSessionsForUser(userId: string): Promise<MentorSession[
  * Get all sessions for a specific mentor
  */
 export async function getSessionsForMentor(mentorId: string): Promise<MentorSession[]> {
+  if (!db) return []
   try {
     const q = query(
       collection(db, SESSIONS_COLLECTION),
@@ -121,6 +124,7 @@ export async function getSessionsForMentor(mentorId: string): Promise<MentorSess
  * Get a single session by ID
  */
 export async function getSessionById(sessionId: string): Promise<MentorSession | null> {
+  if (!db) return null
   try {
     const docRef = doc(db, SESSIONS_COLLECTION, sessionId)
     const docSnap = await getDoc(docRef)
@@ -144,6 +148,7 @@ export async function updateSessionStatus(
   status: SessionStatus,
   updates?: Partial<MentorSession>
 ): Promise<void> {
+  if (!db) throw new Error('Firebase not configured')
   try {
     const docRef = doc(db, SESSIONS_COLLECTION, sessionId)
     

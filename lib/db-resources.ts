@@ -25,8 +25,6 @@ export interface ResourceFilters {
   organizationId?: string
 }
 
-const resourcesCollection = collection(db, 'resources')
-
 function mapResource(docSnapshot: any): Resource {
   const data = docSnapshot.data() || {}
 
@@ -56,6 +54,10 @@ function mapResource(docSnapshot: any): Resource {
 }
 
 export async function getResources(filters?: ResourceFilters): Promise<Resource[]> {
+  if (!db) {
+    return []
+  }
+  const resourcesCollection = collection(db, 'resources')
   const constraints = [] as any[]
 
   if (filters?.category) {
@@ -91,12 +93,19 @@ export async function getResources(filters?: ResourceFilters): Promise<Resource[
 }
 
 export async function getResourceById(id: string): Promise<Resource | null> {
+  if (!db) {
+    return null
+  }
   const snapshot = await getDoc(doc(db, 'resources', id))
   if (!snapshot.exists()) return null
   return mapResource(snapshot)
 }
 
 export async function createResource(data: Partial<Resource>): Promise<Resource> {
+  if (!db) {
+    throw new Error('Firebase not configured')
+  }
+  const resourcesCollection = collection(db, 'resources')
   const docRef = data.id ? doc(resourcesCollection, data.id) : doc(resourcesCollection)
 
   await setDoc(docRef, {
@@ -113,6 +122,9 @@ export async function createResource(data: Partial<Resource>): Promise<Resource>
 }
 
 export async function updateResource(id: string, data: Partial<Resource>): Promise<void> {
+  if (!db) {
+    return
+  }
   await setDoc(
     doc(db, 'resources', id),
     {
@@ -124,22 +136,35 @@ export async function updateResource(id: string, data: Partial<Resource>): Promi
 }
 
 export async function deleteResource(id: string): Promise<void> {
+  if (!db) {
+    return
+  }
   await deleteDoc(doc(db, 'resources', id))
 }
 
 export async function incrementResourceView(id: string): Promise<void> {
+  if (!db) {
+    return
+  }
   await updateDoc(doc(db, 'resources', id), {
     views: increment(1),
   })
 }
 
 export async function incrementResourceDownload(id: string): Promise<void> {
+  if (!db) {
+    return
+  }
   await updateDoc(doc(db, 'resources', id), {
     downloads: increment(1),
   })
 }
 
 export async function getFeaturedResources(): Promise<Resource[]> {
+  if (!db) {
+    return []
+  }
+  const resourcesCollection = collection(db, 'resources')
   const snapshot = await getDocs(
     query(resourcesCollection, where('isFeatured', '==', true), orderBy('createdAt', 'desc'))
   )

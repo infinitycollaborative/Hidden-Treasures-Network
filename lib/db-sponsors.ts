@@ -27,6 +27,7 @@ import type {
 export async function createSponsorTier(
   data: Omit<SponsorTier, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   const tierData = {
     ...data,
     createdAt: serverTimestamp(),
@@ -38,6 +39,7 @@ export async function createSponsorTier(
 }
 
 export async function getSponsorTier(tierId: string): Promise<SponsorTier | null> {
+  if (!db) return null
   const docRef = doc(db, 'sponsorTiers', tierId)
   const docSnap = await getDoc(docRef)
 
@@ -48,6 +50,7 @@ export async function getSponsorTier(tierId: string): Promise<SponsorTier | null
 }
 
 export async function getAllSponsorTiers(activeOnly: boolean = false): Promise<SponsorTier[]> {
+  if (!db) return []
   let q = query(collection(db, 'sponsorTiers'), orderBy('displayOrder', 'asc'))
 
   if (activeOnly) {
@@ -66,6 +69,7 @@ export async function updateSponsorTier(
   tierId: string,
   data: Partial<Omit<SponsorTier, 'id' | 'createdAt' | 'updatedAt'>>
 ): Promise<void> {
+  if (!db) throw new Error('Firebase not configured')
   const docRef = doc(db, 'sponsorTiers', tierId)
   await updateDoc(docRef, {
     ...data,
@@ -80,6 +84,7 @@ export async function updateSponsorTier(
 export async function createSponsor(
   data: Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   const sponsorData = {
     ...data,
     createdAt: serverTimestamp(),
@@ -91,6 +96,7 @@ export async function createSponsor(
 }
 
 export async function getSponsor(sponsorId: string): Promise<Sponsor | null> {
+  if (!db) return null
   const docRef = doc(db, 'sponsors', sponsorId)
   const docSnap = await getDoc(docRef)
 
@@ -101,6 +107,7 @@ export async function getSponsor(sponsorId: string): Promise<Sponsor | null> {
 }
 
 export async function getAllSponsors(statusFilter?: Sponsor['status']): Promise<Sponsor[]> {
+  if (!db) return []
   let q = query(collection(db, 'sponsors'), orderBy('joinedAt', 'desc'))
 
   if (statusFilter) {
@@ -112,6 +119,7 @@ export async function getAllSponsors(statusFilter?: Sponsor['status']): Promise<
 }
 
 export async function getPublishedSponsors(): Promise<Sponsor[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'sponsors'),
     where('isPublished', '==', true),
@@ -124,6 +132,7 @@ export async function getPublishedSponsors(): Promise<Sponsor[]> {
 }
 
 export async function getSponsorsByTier(tierId: string): Promise<Sponsor[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'sponsors'),
     where('tierId', '==', tierId),
@@ -139,6 +148,7 @@ export async function updateSponsor(
   sponsorId: string,
   data: Partial<Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>>
 ): Promise<void> {
+  if (!db) throw new Error('Firebase not configured')
   const docRef = doc(db, 'sponsors', sponsorId)
   await updateDoc(docRef, {
     ...data,
@@ -150,6 +160,7 @@ export async function updateSponsorContributions(
   sponsorId: string,
   amount: number
 ): Promise<void> {
+  if (!db) throw new Error('Firebase not configured')
   const sponsor = await getSponsor(sponsorId)
   if (!sponsor) return
 
@@ -169,6 +180,7 @@ export async function updateSponsorContributions(
 export async function createSponsorApplication(
   data: Omit<SponsorApplication, 'id' | 'status' | 'submittedAt'>
 ): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   const applicationData = {
     ...data,
     status: 'pending' as const,
@@ -182,6 +194,7 @@ export async function createSponsorApplication(
 export async function getSponsorApplication(
   applicationId: string
 ): Promise<SponsorApplication | null> {
+  if (!db) return null
   const docRef = doc(db, 'sponsorApplications', applicationId)
   const docSnap = await getDoc(docRef)
 
@@ -194,6 +207,7 @@ export async function getSponsorApplication(
 export async function getAllSponsorApplications(
   statusFilter?: SponsorApplication['status']
 ): Promise<SponsorApplication[]> {
+  if (!db) return []
   let q = query(collection(db, 'sponsorApplications'), orderBy('submittedAt', 'desc'))
 
   if (statusFilter) {
@@ -214,6 +228,7 @@ export async function updateSponsorApplication(
   applicationId: string,
   data: Partial<Pick<SponsorApplication, 'status' | 'reviewedBy' | 'reviewNotes'>>
 ): Promise<void> {
+  if (!db) throw new Error('Firebase not configured')
   const docRef = doc(db, 'sponsorApplications', applicationId)
   await updateDoc(docRef, {
     ...data,
@@ -260,6 +275,7 @@ export async function approveSponsorApplication(
 export async function createOrUpdateSponsorMetrics(
   data: Omit<SponsorImpactMetrics, 'lastCalculated'>
 ): Promise<void> {
+  if (!db) throw new Error('Firebase not configured')
   const metricsData = {
     ...data,
     lastCalculated: serverTimestamp(),
@@ -268,13 +284,14 @@ export async function createOrUpdateSponsorMetrics(
   const docRef = doc(db, 'sponsorMetrics', data.sponsorId)
   await updateDoc(docRef, metricsData).catch(async () => {
     // If document doesn't exist, create it
-    await addDoc(collection(db, 'sponsorMetrics'), metricsData)
+    if (db) await addDoc(collection(db, 'sponsorMetrics'), metricsData)
   })
 }
 
 export async function getSponsorMetrics(
   sponsorId: string
 ): Promise<SponsorImpactMetrics | null> {
+  if (!db) return null
   const docRef = doc(db, 'sponsorMetrics', sponsorId)
   const docSnap = await getDoc(docRef)
 
@@ -291,6 +308,7 @@ export async function getSponsorMetrics(
 export async function createSponsorImpactReport(
   data: Omit<SponsorImpactReport, 'id' | 'createdAt'>
 ): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   const reportData = {
     ...data,
     createdAt: serverTimestamp(),
@@ -301,6 +319,7 @@ export async function createSponsorImpactReport(
 }
 
 export async function getSponsorReports(sponsorId: string): Promise<SponsorImpactReport[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'sponsorReports'),
     where('sponsorId', '==', sponsorId),

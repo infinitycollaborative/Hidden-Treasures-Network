@@ -17,14 +17,16 @@ import {
 import { db } from './firebase'
 import { AuditLog, AuditAction, UserRole } from '@/types'
 
-const auditLogsCollection = collection(db, 'auditLogs')
-
 /**
  * Create a new audit log entry
  */
 export async function createAuditLog(
   data: Omit<AuditLog, 'id' | 'timestamp'>
 ): Promise<string> {
+  if (!db) {
+    throw new Error('Firebase not configured')
+  }
+  const auditLogsCollection = collection(db, 'auditLogs')
   const docRef = await addDoc(auditLogsCollection, {
     ...data,
     timestamp: serverTimestamp(),
@@ -70,6 +72,10 @@ export async function getAuditLogs(filters?: {
   endDate?: Date
   limit?: number
 }): Promise<AuditLog[]> {
+  if (!db) {
+    return []
+  }
+  const auditLogsCollection = collection(db, 'auditLogs')
   const constraints = []
   
   if (filters?.userId) {
@@ -118,6 +124,10 @@ export async function getOrganizationAuditLogs(
   organizationId: string,
   limitCount: number = 50
 ): Promise<AuditLog[]> {
+  if (!db) {
+    return []
+  }
+  const auditLogsCollection = collection(db, 'auditLogs')
   const q = query(
     auditLogsCollection,
     where('targetType', '==', 'organization'),
@@ -140,6 +150,10 @@ export async function getUserAuditLogs(
   userId: string,
   limitCount: number = 50
 ): Promise<AuditLog[]> {
+  if (!db) {
+    return []
+  }
+  const auditLogsCollection = collection(db, 'auditLogs')
   const q = query(
     auditLogsCollection,
     where('userId', '==', userId),
@@ -158,6 +172,10 @@ export async function getUserAuditLogs(
  * Get recent audit logs (for dashboard)
  */
 export async function getRecentAuditLogs(limitCount: number = 100): Promise<AuditLog[]> {
+  if (!db) {
+    return []
+  }
+  const auditLogsCollection = collection(db, 'auditLogs')
   const q = query(
     auditLogsCollection,
     orderBy('timestamp', 'desc'),
@@ -175,6 +193,10 @@ export async function getRecentAuditLogs(limitCount: number = 100): Promise<Audi
  * Get critical action logs (security-relevant actions)
  */
 export async function getCriticalAuditLogs(limitCount: number = 50): Promise<AuditLog[]> {
+  if (!db) {
+    return []
+  }
+  const auditLogsCollection = collection(db, 'auditLogs')
   const criticalActions: AuditAction[] = [
     'admin_role_changed',
     'organization_suspended',

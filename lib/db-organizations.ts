@@ -66,8 +66,6 @@ export interface OrganizationFilters {
   city?: string
 }
 
-const organizationsCollection = collection(db, 'organizations')
-
 function mapOrganization(docSnapshot: any): OrganizationRecord {
   const data = docSnapshot.data() || {}
   return {
@@ -77,6 +75,10 @@ function mapOrganization(docSnapshot: any): OrganizationRecord {
 }
 
 export async function getAllOrganizations(): Promise<OrganizationRecord[]> {
+  if (!db) {
+    return []
+  }
+  const organizationsCollection = collection(db, 'organizations')
   const snapshot = await getDocs(organizationsCollection)
   return snapshot.docs.map(mapOrganization)
 }
@@ -84,6 +86,10 @@ export async function getAllOrganizations(): Promise<OrganizationRecord[]> {
 export async function getOrganizationsByFilters(
   filters: OrganizationFilters
 ): Promise<OrganizationRecord[]> {
+  if (!db) {
+    return []
+  }
+  const organizationsCollection = collection(db, 'organizations')
   const constraints = [] as any[]
 
   if (filters.country) {
@@ -124,20 +130,33 @@ export async function getOrganizationsByFilters(
 }
 
 export async function getOrganizationById(id: string): Promise<OrganizationRecord | null> {
+  if (!db) {
+    return null
+  }
   const snapshot = await getDoc(doc(db, 'organizations', id))
   if (!snapshot.exists()) return null
   return mapOrganization(snapshot)
 }
 
 export async function createOrganization(data: OrganizationRecord): Promise<string> {
+  if (!db) {
+    throw new Error('Firebase not configured')
+  }
+  const organizationsCollection = collection(db, 'organizations')
   const docRef = await addDoc(organizationsCollection, data)
   return docRef.id
 }
 
 export async function updateOrganization(id: string, data: Partial<OrganizationRecord>): Promise<void> {
+  if (!db) {
+    return
+  }
   await updateDoc(doc(db, 'organizations', id), data)
 }
 
 export async function deleteOrganization(id: string): Promise<void> {
+  if (!db) {
+    return
+  }
   await deleteDoc(doc(db, 'organizations', id))
 }

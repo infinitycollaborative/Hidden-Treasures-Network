@@ -21,14 +21,14 @@ export default function StudentDashboard() {
 
   useEffect(() => {
     async function loadGamificationData() {
-      if (!profile?.id) return
+      if (!profile?.uid) return
 
       try {
         const [xpData, badgesData, badgeStatsData, questsData, leaderboardData] = await Promise.all([
-          getUserXP(profile.id),
-          getUserBadges(profile.id),
-          getUserBadgeStats(profile.id),
-          getUserActiveQuests(profile.id),
+          getUserXP(profile.uid),
+          getUserBadges(profile.uid),
+          getUserBadgeStats(profile.uid),
+          getUserActiveQuests(profile.uid),
           getLeaderboard('global', 'all_time'),
         ])
 
@@ -45,7 +45,7 @@ export default function StudentDashboard() {
     }
 
     loadGamificationData()
-  }, [profile?.id])
+  }, [profile?.uid])
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>
@@ -232,7 +232,7 @@ export default function StudentDashboard() {
                       <div
                         key={entry.userId}
                         className={`flex items-center gap-3 p-2 rounded ${
-                          entry.userId === profile?.id
+                          entry.userId === profile?.uid
                             ? 'bg-blue-50 border border-blue-200'
                             : 'bg-gray-50'
                         }`}
@@ -272,7 +272,6 @@ export default function StudentDashboard() {
               </CardContent>
             </Card>
           </div>
-        </div>
         </div>
       </div>
     </div>

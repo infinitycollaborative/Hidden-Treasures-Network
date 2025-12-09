@@ -18,9 +18,6 @@ import {
 import { db } from './firebase'
 import { ComplianceRequirement, ComplianceSubmission } from '@/types'
 
-const complianceRequirementsCollection = collection(db, 'complianceRequirements')
-const complianceSubmissionsCollection = collection(db, 'complianceSubmissions')
-
 /**
  * Compliance Requirements Operations
  */
@@ -28,6 +25,10 @@ const complianceSubmissionsCollection = collection(db, 'complianceSubmissions')
 export async function createComplianceRequirement(
   data: Omit<ComplianceRequirement, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
+  if (!db) {
+    throw new Error('Firebase not configured')
+  }
+  const complianceRequirementsCollection = collection(db, 'complianceRequirements')
   const docRef = await addDoc(complianceRequirementsCollection, {
     ...data,
     createdAt: serverTimestamp(),
@@ -37,6 +38,10 @@ export async function createComplianceRequirement(
 }
 
 export async function getComplianceRequirements(): Promise<ComplianceRequirement[]> {
+  if (!db) {
+    return []
+  }
+  const complianceRequirementsCollection = collection(db, 'complianceRequirements')
   const snapshot = await getDocs(complianceRequirementsCollection)
   return snapshot.docs.map(doc => ({
     id: doc.id,
@@ -47,6 +52,9 @@ export async function getComplianceRequirements(): Promise<ComplianceRequirement
 export async function getComplianceRequirementById(
   id: string
 ): Promise<ComplianceRequirement | null> {
+  if (!db) {
+    return null
+  }
   const docRef = doc(db, 'complianceRequirements', id)
   const docSnap = await getDoc(docRef)
   
@@ -64,6 +72,9 @@ export async function updateComplianceRequirement(
   id: string,
   data: Partial<ComplianceRequirement>
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'complianceRequirements', id)
   await updateDoc(docRef, {
     ...data,
@@ -78,6 +89,10 @@ export async function updateComplianceRequirement(
 export async function createComplianceSubmission(
   data: Omit<ComplianceSubmission, 'id' | 'submittedAt'>
 ): Promise<string> {
+  if (!db) {
+    throw new Error('Firebase not configured')
+  }
+  const complianceSubmissionsCollection = collection(db, 'complianceSubmissions')
   const docRef = await addDoc(complianceSubmissionsCollection, {
     ...data,
     submittedAt: serverTimestamp(),
@@ -88,6 +103,10 @@ export async function createComplianceSubmission(
 export async function getComplianceSubmissionsByOrg(
   orgId: string
 ): Promise<ComplianceSubmission[]> {
+  if (!db) {
+    return []
+  }
+  const complianceSubmissionsCollection = collection(db, 'complianceSubmissions')
   const q = query(
     complianceSubmissionsCollection,
     where('orgId', '==', orgId),
@@ -103,6 +122,9 @@ export async function getComplianceSubmissionsByOrg(
 export async function getComplianceSubmissionById(
   id: string
 ): Promise<ComplianceSubmission | null> {
+  if (!db) {
+    return null
+  }
   const docRef = doc(db, 'complianceSubmissions', id)
   const docSnap = await getDoc(docRef)
   
@@ -120,6 +142,9 @@ export async function updateComplianceSubmission(
   id: string,
   data: Partial<ComplianceSubmission>
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'complianceSubmissions', id)
   await updateDoc(docRef, {
     ...data,
@@ -134,6 +159,9 @@ export async function approveComplianceSubmission(
   comments?: string,
   expirationDate?: Date
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'complianceSubmissions', id)
   await updateDoc(docRef, {
     status: 'approved',
@@ -151,6 +179,9 @@ export async function rejectComplianceSubmission(
   reviewerName: string,
   comments: string
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'complianceSubmissions', id)
   await updateDoc(docRef, {
     status: 'rejected',
@@ -162,6 +193,10 @@ export async function rejectComplianceSubmission(
 }
 
 export async function getPendingComplianceSubmissions(): Promise<ComplianceSubmission[]> {
+  if (!db) {
+    return []
+  }
+  const complianceSubmissionsCollection = collection(db, 'complianceSubmissions')
   const q = query(
     complianceSubmissionsCollection,
     where('status', '==', 'submitted'),
@@ -177,6 +212,10 @@ export async function getPendingComplianceSubmissions(): Promise<ComplianceSubmi
 export async function getExpiringComplianceSubmissions(
   daysAhead: number = 30
 ): Promise<ComplianceSubmission[]> {
+  if (!db) {
+    return []
+  }
+  const complianceSubmissionsCollection = collection(db, 'complianceSubmissions')
   const futureDate = new Date()
   futureDate.setDate(futureDate.getDate() + daysAhead)
   
@@ -197,20 +236,17 @@ export async function getExpiringComplianceSubmissions(
  * Calculate compliance score for an organization
  */
 export async function calculateComplianceScore(orgId: string): Promise<number> {
-  // Get all requirements
   const requirements = await getComplianceRequirements()
   const orgRequirements = requirements.filter(req => 
     req.appliesTo.includes('organization')
   )
   
   if (orgRequirements.length === 0) {
-    return 100 // No requirements means 100% compliant
+    return 100
   }
   
-  // Get all submissions for this org
   const submissions = await getComplianceSubmissionsByOrg(orgId)
   
-  // Count approved and current submissions
   let approvedCount = 0
   const now = new Date()
   
@@ -219,7 +255,6 @@ export async function calculateComplianceScore(orgId: string): Promise<number> {
       sub => sub.requirementId === req.id && sub.status === 'approved'
     )
     
-    // Check if any submission is current (not expired)
     const hasCurrentSubmission = reqSubmissions.some(sub => {
       if (!sub.expirationDate) return true
       const expDate = (sub.expirationDate as any).toDate()

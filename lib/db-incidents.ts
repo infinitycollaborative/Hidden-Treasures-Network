@@ -18,14 +18,16 @@ import {
 import { db } from './firebase'
 import { Incident, IncidentNote, IncidentStatus, IncidentType, IncidentPriority } from '@/types'
 
-const incidentsCollection = collection(db, 'incidents')
-
 /**
  * Create a new incident report
  */
 export async function createIncident(
   data: Omit<Incident, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
+  if (!db) {
+    throw new Error('Firebase not configured')
+  }
+  const incidentsCollection = collection(db, 'incidents')
   const docRef = await addDoc(incidentsCollection, {
     ...data,
     createdAt: serverTimestamp(),
@@ -38,6 +40,9 @@ export async function createIncident(
  * Get incident by ID
  */
 export async function getIncidentById(id: string): Promise<Incident | null> {
+  if (!db) {
+    return null
+  }
   const docRef = doc(db, 'incidents', id)
   const docSnap = await getDoc(docRef)
   
@@ -61,6 +66,10 @@ export async function getIncidents(filters?: {
   type?: IncidentType
   minorsInvolved?: boolean
 }): Promise<Incident[]> {
+  if (!db) {
+    return []
+  }
+  const incidentsCollection = collection(db, 'incidents')
   const constraints = []
   
   if (filters?.status) {
@@ -98,6 +107,10 @@ export async function getIncidents(filters?: {
  * Get open incidents
  */
 export async function getOpenIncidents(): Promise<Incident[]> {
+  if (!db) {
+    return []
+  }
+  const incidentsCollection = collection(db, 'incidents')
   const q = query(
     incidentsCollection,
     where('status', 'in', ['open', 'under_review']),
@@ -116,6 +129,10 @@ export async function getOpenIncidents(): Promise<Incident[]> {
  * Get high priority incidents
  */
 export async function getHighPriorityIncidents(): Promise<Incident[]> {
+  if (!db) {
+    return []
+  }
+  const incidentsCollection = collection(db, 'incidents')
   const q = query(
     incidentsCollection,
     where('priority', 'in', ['high', 'critical']),
@@ -135,6 +152,10 @@ export async function getHighPriorityIncidents(): Promise<Incident[]> {
  * Get incidents involving minors
  */
 export async function getIncidentsWithMinors(): Promise<Incident[]> {
+  if (!db) {
+    return []
+  }
+  const incidentsCollection = collection(db, 'incidents')
   const q = query(
     incidentsCollection,
     where('minorsInvolved', '==', true),
@@ -156,6 +177,9 @@ export async function updateIncident(
   id: string,
   data: Partial<Incident>
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'incidents', id)
   await updateDoc(docRef, {
     ...data,
@@ -171,6 +195,9 @@ export async function assignIncident(
   assignedTo: string,
   assignedToName: string
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'incidents', incidentId)
   await updateDoc(docRef, {
     assignedTo,
@@ -187,6 +214,9 @@ export async function updateIncidentStatus(
   incidentId: string,
   status: IncidentStatus
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'incidents', incidentId)
   const updateData: any = {
     status,
@@ -207,6 +237,9 @@ export async function addIncidentNote(
   incidentId: string,
   note: Omit<IncidentNote, 'id' | 'timestamp'>
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const incident = await getIncidentById(incidentId)
   if (!incident) {
     throw new Error('Incident not found')
@@ -235,6 +268,9 @@ export async function updateIncidentPriority(
   incidentId: string,
   priority: IncidentPriority
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'incidents', incidentId)
   await updateDoc(docRef, {
     priority,
@@ -248,6 +284,10 @@ export async function updateIncidentPriority(
 export async function getIncidentsByOrganization(
   organizationId: string
 ): Promise<Incident[]> {
+  if (!db) {
+    return []
+  }
+  const incidentsCollection = collection(db, 'incidents')
   const q = query(
     incidentsCollection,
     where('organizationId', '==', organizationId),

@@ -20,14 +20,16 @@ import {
 import { db } from './firebase'
 import { AdminMessage, MessageAudience, UserRole } from '@/types'
 
-const adminMessagesCollection = collection(db, 'adminMessages')
-
 /**
  * Create a new admin message
  */
 export async function createAdminMessage(
   data: Omit<AdminMessage, 'id' | 'createdAt' | 'readBy'>
 ): Promise<string> {
+  if (!db) {
+    throw new Error('Firebase not configured')
+  }
+  const adminMessagesCollection = collection(db, 'adminMessages')
   const docRef = await addDoc(adminMessagesCollection, {
     ...data,
     readBy: [],
@@ -40,6 +42,9 @@ export async function createAdminMessage(
  * Get message by ID
  */
 export async function getAdminMessageById(id: string): Promise<AdminMessage | null> {
+  if (!db) {
+    return null
+  }
   const docRef = doc(db, 'adminMessages', id)
   const docSnap = await getDoc(docRef)
   
@@ -61,6 +66,10 @@ export async function getAdminMessages(filters?: {
   sent?: boolean
   limitCount?: number
 }): Promise<AdminMessage[]> {
+  if (!db) {
+    return []
+  }
+  const adminMessagesCollection = collection(db, 'adminMessages')
   const constraints = []
   
   if (filters?.audience) {
@@ -100,32 +109,25 @@ export async function getMessagesForUser(
   region?: string,
   organizationId?: string
 ): Promise<AdminMessage[]> {
-  // This would need to query multiple conditions
-  // For now, get all messages and filter
   const allMessages = await getAdminMessages({ sent: true })
   
   return allMessages.filter(msg => {
-    // Network-wide messages go to everyone
     if (msg.audience === 'network_wide') {
       return true
     }
     
-    // Country-specific messages
     if (msg.audience === 'country' && country) {
       return msg.targetCountries?.includes(country)
     }
     
-    // Region-specific messages
     if (msg.audience === 'region' && region) {
       return msg.targetRegions?.includes(region)
     }
     
-    // Organization-specific messages
     if (msg.audience === 'organization' && organizationId) {
       return msg.targetOrganizations?.includes(organizationId)
     }
     
-    // Role-specific messages
     if (msg.audience === 'role_specific') {
       return msg.targetRoles?.includes(userRole)
     }
@@ -141,6 +143,9 @@ export async function markMessageAsRead(
   messageId: string,
   userId: string
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'adminMessages', messageId)
   await updateDoc(docRef, {
     readBy: arrayUnion(userId),
@@ -151,6 +156,9 @@ export async function markMessageAsRead(
  * Send scheduled message (mark as sent)
  */
 export async function sendAdminMessage(messageId: string): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'adminMessages', messageId)
   await updateDoc(docRef, {
     sentAt: serverTimestamp(),
@@ -164,6 +172,9 @@ export async function updateAdminMessage(
   id: string,
   data: Partial<AdminMessage>
 ): Promise<void> {
+  if (!db) {
+    return
+  }
   const docRef = doc(db, 'adminMessages', id)
   await updateDoc(docRef, data)
 }
@@ -186,6 +197,10 @@ export async function getUnreadMessagesForUser(
  * Get pending scheduled messages
  */
 export async function getPendingScheduledMessages(): Promise<AdminMessage[]> {
+  if (!db) {
+    return []
+  }
+  const adminMessagesCollection = collection(db, 'adminMessages')
   const now = Timestamp.now()
   const q = query(
     adminMessagesCollection,

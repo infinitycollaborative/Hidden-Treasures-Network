@@ -21,6 +21,7 @@ import type { Donation, DonationReceipt } from '@/types/donation'
 export async function createDonation(
   data: Omit<Donation, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   const donationData = {
     ...data,
     createdAt: serverTimestamp(),
@@ -35,6 +36,7 @@ export async function createDonation(
  * Get donation by ID
  */
 export async function getDonation(donationId: string): Promise<Donation | null> {
+  if (!db) return null
   const docRef = doc(db, 'donations', donationId)
   const docSnap = await getDoc(docRef)
 
@@ -51,6 +53,7 @@ export async function updateDonationStatus(
   donationId: string,
   status: Donation['status']
 ): Promise<void> {
+  if (!db) throw new Error('Firebase not configured')
   const docRef = doc(db, 'donations', donationId)
   await updateDoc(docRef, {
     status,
@@ -62,6 +65,7 @@ export async function updateDonationStatus(
  * Get donations by user ID
  */
 export async function getDonationsByUser(userId: string): Promise<Donation[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'donations'),
     where('userId', '==', userId),
@@ -80,6 +84,7 @@ export async function getDonationsByUser(userId: string): Promise<Donation[]> {
 export async function getAllDonations(
   limitCount: number = 100
 ): Promise<Donation[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'donations'),
     orderBy('createdAt', 'desc'),
@@ -96,6 +101,7 @@ export async function getAllDonations(
  * Get donations by sponsor tier
  */
 export async function getDonationsByTier(tierId: string): Promise<Donation[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'donations'),
     where('sponsorTier', '==', tierId),
@@ -115,6 +121,7 @@ export async function getDonationsByTier(tierId: string): Promise<Donation[]> {
 export async function createDonationReceipt(
   data: Omit<DonationReceipt, 'id' | 'createdAt'>
 ): Promise<string> {
+  if (!db) throw new Error('Firebase not configured')
   const receiptData = {
     ...data,
     createdAt: serverTimestamp(),
@@ -130,6 +137,7 @@ export async function createDonationReceipt(
 export async function getReceiptByDonationId(
   donationId: string
 ): Promise<DonationReceipt | null> {
+  if (!db) return null
   const q = query(
     collection(db, 'donationReceipts'),
     where('donationId', '==', donationId),
@@ -148,6 +156,7 @@ export async function getReceiptByDonationId(
  * Get receipts by user ID
  */
 export async function getReceiptsByUser(userId: string): Promise<DonationReceipt[]> {
+  if (!db) return []
   const q = query(
     collection(db, 'donationReceipts'),
     where('userId', '==', userId),
