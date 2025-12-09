@@ -12,13 +12,16 @@ import {
   updateDoc,
   where,
   writeBatch,
+  Firestore,
 } from 'firebase/firestore'
 
-import { db } from './firebase'
+import { db, isFirebaseConfigured } from './firebase'
 import { AppNotification } from '@/types/notification'
 import { UserRole } from '@/types'
 
-const notificationsCollection = collection(db, 'notifications')
+function getNotificationsCollection(database: Firestore) {
+  return collection(database, 'notifications')
+}
 
 function mapNotification(snapshot: any): AppNotification {
   const data = snapshot.data() || {}
@@ -37,7 +40,9 @@ function mapNotification(snapshot: any): AppNotification {
 export async function createNotification(
   userId: string,
   data: Partial<AppNotification>
-): Promise<AppNotification> {
+): Promise<AppNotification | null> {
+  if (!db) return null
+  const notificationsCollection = getNotificationsCollection(db)
   const docRef = data.id ? doc(notificationsCollection, data.id) : doc(notificationsCollection)
   await setDoc(docRef, {
     ...data,
@@ -50,6 +55,8 @@ export async function createNotification(
 }
 
 export async function getNotificationsForUser(userId: string): Promise<AppNotification[]> {
+  if (!db) return []
+  const notificationsCollection = getNotificationsCollection(db)
   const snapshot = await getDocs(
     query(notificationsCollection, where('userId', '==', userId), orderBy('createdAt', 'desc'))
   )
@@ -57,10 +64,13 @@ export async function getNotificationsForUser(userId: string): Promise<AppNotifi
 }
 
 export async function markNotificationRead(notificationId: string): Promise<void> {
+  if (!db) return
   await updateDoc(doc(db, 'notifications', notificationId), { read: true })
 }
 
 export async function markAllNotificationsRead(userId: string): Promise<void> {
+  if (!db) return
+  const notificationsCollection = getNotificationsCollection(db)
   const snapshot = await getDocs(
     query(notificationsCollection, where('userId', '==', userId), where('read', '==', false))
   )
@@ -72,6 +82,7 @@ export async function markAllNotificationsRead(userId: string): Promise<void> {
 }
 
 export async function deleteNotification(notificationId: string): Promise<void> {
+  if (!db) return
   await deleteDoc(doc(db, 'notifications', notificationId))
 }
 
@@ -79,6 +90,7 @@ export async function sendBroadcastNotification(
   role: UserRole,
   data: Partial<AppNotification>
 ): Promise<void> {
+  if (!db) return
   const usersSnapshot = await getDocs(query(collection(db, 'users'), where('role', '==', role)))
   const tasks = usersSnapshot.docs.map((user) =>
     createNotification(user.id, {
@@ -96,6 +108,11 @@ export function watchUserNotifications(
   userId: string,
   callback: (notifications: AppNotification[]) => void
 ): () => void {
+  if (!db) {
+    callback([])
+    return () => {}
+  }
+  const notificationsCollection = getNotificationsCollection(db)
   const q = query(notificationsCollection, where('userId', '==', userId), orderBy('createdAt', 'desc'))
   const unsubscribe = onSnapshot(q, (snapshot) => {
     const mapped = snapshot.docs.map(mapNotification)
@@ -110,3 +127,5 @@ export const notificationIndexes = {
     { field: 'createdAt' },
   ],
 }
+
+export { isFirebaseConfigured }

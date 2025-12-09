@@ -11,11 +11,16 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.googleusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+  allowedDevOrigins: ['*'],
 }
 
 export default nextConfig
