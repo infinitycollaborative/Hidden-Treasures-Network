@@ -6,7 +6,7 @@ A global platform connecting aviation and STEM education organizations, mentors,
 
 ## 🌟 Overview
 
-Hidden Treasures Network is the digital layer of Flight Plan 2030, an initiative by **Infinity Aero Club Tampa Bay, Inc.** (501(c)(3) nonprofit). Led by **Ricardo "Tattoo" Foster, LCDR USN (Ret.)**, our mission is to unite aviation and STEM education organizations worldwide to share resources, amplify impact, and create pathways for underserved youth.
+Hidden Treasures Network is the digital layer of Flight Plan 2030, an initiative by **Infinity Aero Club Tampa Bay, Inc.** (501(c)(3) nonprofit) in partnership with **Gleim Aviation**. Our mission is to unite aviation and STEM education organizations worldwide to share resources, amplify impact, and create pathways for underserved youth.
 
 ## 🎯 Mission
 
@@ -218,7 +218,7 @@ This is a nonprofit initiative. Contributions welcome!
 - **Website:** [HiddenTreasuresNetwork.org](https://hiddentreasuresnetwork.org)
 - **Email:** info@hiddentreasuresnetwork.org
 - **Organization:** Infinity Aero Club Tampa Bay, Inc.
-- **Founder:** Ricardo "Tattoo" Foster, LCDR USN (Ret.)
+- **Partner:** Gleim Aviation
 
 ## 📄 License
 
