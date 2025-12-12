@@ -16,17 +16,35 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
       },
     ],
+    // Optimize images for faster loading
+    formats: ['image/avif', 'image/webp'],
   },
   experimental: {
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ['lucide-react', 'recharts', 'date-fns'],
   },
-  allowedDevOrigins: ['*'],
+  // CORS headers for API routes (enables cross-origin requests from Replit, etc.)
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Access-Control-Allow-Credentials', value: 'true' },
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
+          { key: 'Access-Control-Allow-Headers', value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version' },
+        ],
+      },
+    ];
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: false,
+    // Set SKIP_TYPE_CHECK=true in env to skip type checking during builds
+    ignoreBuildErrors: process.env.SKIP_TYPE_CHECK === 'true',
   },
+  // Optimize for serverless deployment (Vercel, Replit, etc.)
+  output: 'standalone',
 }
 
 export default nextConfig

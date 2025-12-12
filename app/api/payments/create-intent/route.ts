@@ -7,7 +7,7 @@ function getStripe(): Stripe | null {
     return null;
   }
   return new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2025-11-17.clover',
+    apiVersion: '2024-11-20.acacia',
   });
 }
 

@@ -6,7 +6,7 @@ let stripeInstance: Stripe | null = null;
 export function getStripe(): Stripe | null {
   if (!stripeInstance && process.env.STRIPE_SECRET_KEY) {
     stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-11-17.clover",
+      apiVersion: "2024-11-20.acacia",
     });
   }
   return stripeInstance;
