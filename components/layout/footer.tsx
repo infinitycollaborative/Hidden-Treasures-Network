@@ -57,7 +57,7 @@ export function Footer() {
         <div className="border-t border-aviation-sky/30 mt-8 pt-8 text-center text-sm text-gray-400">
           <p>&copy; {currentYear} Hidden Treasures Network. All rights reserved.</p>
           <p className="mt-2">
-            Founded by Ricardo "Tattoo" Foster, LCDR USN (Ret.)
+            A network of educators, mentors, and partners impacting one million lives by 2030
           </p>
         </div>
       </div>

@@ -89,8 +89,8 @@ export default function HomePage() {
                 future of flight.
               </p>
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                Led by Ricardo "Tattoo" Foster, LCDR USN (Ret.), and powered by Infinity Aero Club Tampa Bay, Inc.
-                (501(c)(3)), we are committed to reaching one million lives by 2030.
+                Powered by Infinity Aero Club Tampa Bay, Inc. (501(c)(3)) and partners like Gleim Aviation, our
+                network of educators, mentors, mentees, and sponsors is committed to reaching one million lives by 2030.
               </p>
               <Link href="/about">
                 <Button className="bg-aviation-navy hover:bg-aviation-navy/90 text-white">

@@ -22,9 +22,8 @@ export const organizationSchema = {
   "description": "A global network connecting aviation and STEM organizations to impact one million lives by 2030 through education, mentorship, and opportunity.",
   "foundingDate": "2023",
   "founders": [{
-    "@type": "Person",
-    "name": "Ricardo Foster",
-    "jobTitle": "Founder & CEO"
+    "@type": "Organization",
+    "name": "Infinity Aero Club Tampa Bay, Inc."
   }],
   "contactPoint": {
     "@type": "ContactPoint",

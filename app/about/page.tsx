@@ -186,13 +186,16 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Leadership */}
+      {/* Leadership & Partners */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-aviation-navy mb-4">
-              Leadership
+              Executive Leadership & Partners
             </h2>
+            <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+              Infinity Aero Club Tampa Bay, Inc. and our strategic partners are united in a shared mission
+            </p>
           </div>
 
           <Card className="max-w-4xl mx-auto">
@@ -200,21 +203,20 @@ export default function AboutPage() {
               <div className="mb-4">
                 <Plane className="h-16 w-16 text-aviation-sky mx-auto" />
               </div>
-              <CardTitle className="text-3xl mb-2">Ricardo "Tattoo" Foster</CardTitle>
+              <CardTitle className="text-3xl mb-2">Our Story</CardTitle>
               <CardDescription className="text-xl text-aviation-gold">
-                LCDR USN (Ret.) - Founder & CEO
+                A Network Built on Purpose
               </CardDescription>
             </CardHeader>
             <CardContent className="prose max-w-none">
               <p className="text-gray-700 text-center mb-4">
-                A retired Lieutenant Commander in the United States Navy, Ricardo "Tattoo" Foster
-                brings decades of aviation experience and a deep passion for youth empowerment.
-                As the founder of Infinity Aero Club Tampa Bay, Inc. and Hidden Treasures Network,
-                he has dedicated his post-military career to creating opportunities for
-                underserved youth to pursue their dreams in aviation and STEM.
+                What began as a vision to empower underserved youth through aviation has grown into a
+                thriving network of educators, mentors, mentees, partners, and sponsors. Executive leadership
+                at Infinity Aero Club Tampa Bay, Inc. works alongside strategic partners such as Gleim Aviation
+                to bring decades of aviation experience and a deep passion for youth empowerment to communities worldwide.
               </p>
               <p className="text-gray-700 text-center">
-                His vision: to build a global network where organizations work together to impact
+                Our vision: to build a global network where organizations work together to impact
                 one million lives by 2030, proving that when we unite our efforts, we can create
                 transformational change for the next generation.
               </p>

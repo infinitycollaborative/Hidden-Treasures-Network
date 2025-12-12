@@ -315,11 +315,12 @@ export default function MediaPage() {
                 to impact one million lives by 2030.
               </p>
               <p className="text-gray-700 leading-relaxed mb-4">
-                Founded by Ricardo "Tattoo" Foster, LCDR USN (Ret.), and operated by{" "}
-                <strong>Infinity Aero Club Tampa Bay, Inc.</strong>, a 501(c)(3) nonprofit organization, Hidden
-                Treasures Network provides pathways for youth to pursue careers in aviation, aerospace, and STEM
-                fields through programs including flight training, drone certification, aircraft maintenance,
-                coding labs, and entrepreneurship education.
+                Operated by <strong>Infinity Aero Club Tampa Bay, Inc.</strong>, a 501(c)(3) nonprofit organization,
+                in partnership with contributors like <strong>Gleim Aviation</strong>, Hidden Treasures Network
+                provides pathways for youth to pursue careers in aviation, aerospace, and STEM fields through
+                programs including flight training, drone certification, aircraft maintenance, coding labs, and
+                entrepreneurship education. What started as a vision has grown into a network of educators,
+                mentors, mentees, partners, and sponsors committed to transforming lives.
               </p>
               <p className="text-gray-700 leading-relaxed">
                 For more information, visit{" "}
