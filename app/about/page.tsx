@@ -191,10 +191,16 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-aviation-navy mb-4">
-              Executive Leadership & Partners
+              Infinite Collaborative — Collaboration That Creates Legacy
             </h2>
-            <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-              Infinity Aero Club Tampa Bay, Inc. and our strategic partners are united in a shared mission
+            <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-4">
+              Hidden Treasures Network represents the fusion of Infinity Aero Club Tampa Bay's grassroots impact with the expertise of industry trailblazers—decades of aviation, STEM, and entrepreneurship excellence paired with a heart for empowering youth. Our pledge: connect organizations globally to share hard-earned wisdom, invest in tomorrow's leaders, and transform one million lives by 2030. Together, we don't just open doors—we build runways that last generations.
+            </p>
+            <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-4">
+              Join the movement. Become part of an infinite network of changemakers dedicated to discovering the hidden treasure in every young person.
+            </p>
+            <p className="text-aviation-gold font-semibold">
+              A 501(c)(3) nonprofit initiative based in Florida.
             </p>
           </div>
 
