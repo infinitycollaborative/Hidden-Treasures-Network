@@ -198,9 +198,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold text-aviation-navy mb-4">
               Executive Leadership & Partners
             </h2>
-            <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-              Infinity Aero Club Tampa Bay, Inc. and our strategic partners are united in a shared mission
-            </p>
+            <p className="text-lg text-gray-700 max-w-3xl mx-auto">Infinity Aero Club Tampa Bay, Inc. and our strategic partners are united in a shared mission</p>
           </div>
 
           <Card className="max-w-4xl mx-auto">
