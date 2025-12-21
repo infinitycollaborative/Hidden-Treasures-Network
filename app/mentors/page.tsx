@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { collection, query, where, getDocs } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { getFirebaseDb } from '@/lib/firebase'
 import { UserProfile } from '@/types/user'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -23,11 +23,12 @@ export default function MentorsPage() {
   }, [])
 
   async function fetchMentors() {
+    const db = getFirebaseDb()
     if (!db) {
       setLoading(false)
       return
     }
-    
+
     try {
       const q = query(
         collection(db, 'users'),

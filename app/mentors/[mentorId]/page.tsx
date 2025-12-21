@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { doc, getDoc } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { getFirebaseDb } from '@/lib/firebase'
 import { UserProfile } from '@/types/user'
 import { useAuth } from '@/hooks/use-auth'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -38,11 +38,12 @@ export default function MentorProfilePage() {
   }, [mentorId])
 
   async function fetchMentor() {
+    const db = getFirebaseDb()
     if (!db) {
       setLoading(false)
       return
     }
-    
+
     try {
       const docRef = doc(db, 'users', mentorId)
       const docSnap = await getDoc(docRef)

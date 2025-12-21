@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { collection, query, where, getDocs } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { getFirebaseDb } from '@/lib/firebase'
 import { UserProfile } from '@/types/user'
 import { useAuth } from '@/hooks/use-auth'
 import { 
@@ -39,11 +39,12 @@ export default function FindMentorPage() {
   }, [currentProfile, authLoading])
 
   async function fetchAndMatchMentors() {
+    const db = getFirebaseDb()
     if (!db) {
       setLoading(false)
       return
     }
-    
+
     try {
       // Fetch all mentors who accept new mentees
       const q = query(

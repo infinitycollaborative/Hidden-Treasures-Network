@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
-import { db } from '@/lib/firebase'
+import { getFirebaseDb } from '@/lib/firebase'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import type { CreatePaymentIntentRequest, CreatePaymentIntentResponse } from '@/types/donation'
 
@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Store donation record in Firestore if db is configured
+    const db = getFirebaseDb()
     if (db) {
       const donationData = {
         userId: donorId || null,

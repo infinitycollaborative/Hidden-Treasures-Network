@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { User, onAuthStateChanged } from 'firebase/auth'
 import { doc, onSnapshot } from 'firebase/firestore'
-import { auth, db, isFirebaseConfigured } from '@/lib/firebase'
+import { getFirebaseAuth, getFirebaseDb, isFirebaseConfigured } from '@/lib/firebase'
 import { UserProfile } from '@/lib/auth'
 
 interface UseAuthReturn {
@@ -25,6 +25,10 @@ export function useAuth(): UseAuthReturn {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
+    // Get Firebase instances lazily - only initializes in browser
+    const auth = getFirebaseAuth()
+    const db = getFirebaseDb()
+
     if (!isFirebaseConfigured || !auth) {
       setLoading(false)
       return

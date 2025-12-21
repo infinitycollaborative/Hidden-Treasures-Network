@@ -13,30 +13,65 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
-const isFirebaseConfigured = Boolean(
+export const isFirebaseConfigured = Boolean(
   process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
   process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
 )
 
-let app: FirebaseApp | null = null
-let auth: Auth | null = null
-let db: Firestore | null = null
-let storage: FirebaseStorage | null = null
+// Lazy-initialized singletons
+let _app: FirebaseApp | null = null
+let _auth: Auth | null = null
+let _db: Firestore | null = null
+let _storage: FirebaseStorage | null = null
+let _initialized = false
 
-// Only initialize Firebase on the client side to prevent build-time errors
-if (typeof window !== 'undefined' && isFirebaseConfigured) {
+function ensureInitialized(): boolean {
+  // Skip initialization on server-side to prevent build errors
+  if (typeof window === 'undefined') return false
+  if (_initialized) return true
+  if (!isFirebaseConfigured) return false
+
   try {
     if (!getApps().length) {
-      app = initializeApp(firebaseConfig)
+      _app = initializeApp(firebaseConfig)
     } else {
-      app = getApps()[0]
+      _app = getApps()[0]
     }
-    auth = getAuth(app)
-    db = getFirestore(app)
-    storage = getStorage(app)
+    _auth = getAuth(_app)
+    _db = getFirestore(_app)
+    _storage = getStorage(_app)
+    _initialized = true
+    return true
   } catch (error) {
     console.warn('Firebase initialization failed:', error)
+    return false
   }
 }
 
-export { app, auth, db, storage, isFirebaseConfigured }
+// Getter functions for lazy initialization
+export function getFirebaseApp(): FirebaseApp | null {
+  ensureInitialized()
+  return _app
+}
+
+export function getFirebaseAuth(): Auth | null {
+  ensureInitialized()
+  return _auth
+}
+
+export function getFirebaseDb(): Firestore | null {
+  ensureInitialized()
+  return _db
+}
+
+export function getFirebaseStorage(): FirebaseStorage | null {
+  ensureInitialized()
+  return _storage
+}
+
+// For backwards compatibility - these will be null during SSR
+// Components should check for null or use the getter functions
+export const app: FirebaseApp | null = null
+export const auth: Auth | null = null
+export const db: Firestore | null = null
+export const storage: FirebaseStorage | null = null

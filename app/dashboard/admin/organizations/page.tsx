@@ -14,7 +14,7 @@ import {
   OrganizationStatus,
 } from '@/lib/db-organizations'
 import { useAuth } from '@/hooks/use-auth'
-import { storage } from '@/lib/firebase'
+import { getFirebaseStorage } from '@/lib/firebase'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -90,6 +90,7 @@ export default function AdminOrganizationsPage() {
   }, [])
 
   const uploadAsset = async (path: string, file: File) => {
+    const storage = getFirebaseStorage()
     if (!storage) throw new Error('Storage not configured')
     const storageRef = ref(storage, path)
     await uploadBytes(storageRef, file)

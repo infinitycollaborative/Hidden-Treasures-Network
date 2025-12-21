@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
 import { useAuth } from '@/hooks/use-auth'
-import { db } from '@/lib/firebase'
+import { getFirebaseDb } from '@/lib/firebase'
 import { NotificationPreferences } from '@/types'
 
 const schema = z.object({
@@ -44,6 +44,7 @@ export default function NotificationSettingsPage() {
 
   useEffect(() => {
     const loadPreferences = async () => {
+      const db = getFirebaseDb()
       if (!user?.uid || !db) return
       const snapshot = await getDoc(doc(db, 'users', user.uid))
       const prefs = snapshot.data()?.notificationPreferences as NotificationPreferences | undefined
@@ -55,6 +56,7 @@ export default function NotificationSettingsPage() {
   }, [user?.uid, form])
 
   const onSubmit = async (data: NotificationPreferences) => {
+    const db = getFirebaseDb()
     if (!user?.uid || !db) return
     setLoading(true)
     setSaved(false)
