@@ -23,7 +23,8 @@ let auth: Auth | null = null
 let db: Firestore | null = null
 let storage: FirebaseStorage | null = null
 
-if (isFirebaseConfigured) {
+// Only initialize Firebase on the client side to prevent build-time errors
+if (typeof window !== 'undefined' && isFirebaseConfigured) {
   try {
     if (!getApps().length) {
       app = initializeApp(firebaseConfig)
