@@ -57,13 +57,13 @@ export default function HomePage() {
             {/* Stats Strip */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-5xl mx-auto">
               {[
-                { value: "50+", label: "Partner Organizations" },
-                { value: "200,000+", label: "Youth Impacted" },
-                { value: "25+", label: "Countries Reached" },
-                { value: "1,200+", label: "Discovery Flights" },
+                { value: "200,000+", label: "Youth Impacted", smaller: true },
+                { value: "1,200+", label: "Discovery Flights", smaller: false },
+                { value: "50+", label: "Organizations", smaller: false },
+                { value: "25+", label: "Countries Reached", smaller: false },
               ].map((stat) => (
                 <div key={stat.label} className="text-center p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
-                  <p className="font-display text-4xl md:text-5xl font-bold text-aviation-gold mb-2">
+                  <p className={`font-display font-bold text-aviation-gold mb-2 ${stat.smaller ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl'}`}>
                     {stat.value}
                   </p>
                   <p className="text-sm md:text-base text-gray-200">{stat.label}</p>
