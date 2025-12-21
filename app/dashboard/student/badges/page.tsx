@@ -9,22 +9,29 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getUserBadges, getUserBadgeStats, getActiveBadges } from '@/lib/db-gamification'
 import { BadgeCard } from '@/components/gamification'
-import type { UserBadge, BadgeDefinition, BadgeCategory } from '@/types'
+import type { UserBadge, BadgeDefinition, BadgeCategory, BadgeTier } from '@/types'
 
 const categoryLabels: Record<BadgeCategory, string> = {
-  achievement: 'Achievement',
-  skill: 'Skill',
-  participation: 'Participation',
-  milestone: 'Milestone',
-  special: 'Special',
+  tuskegee_tribute: 'Tuskegee Tribute',
+  hidden_treasures: 'Hidden Treasures',
+  flight_milestones: 'Flight Milestones',
   community: 'Community',
+  mentorship: 'Mentorship',
+  education: 'Education',
+  leadership: 'Leadership',
+  innovation: 'Innovation',
+  special: 'Special',
 }
 
 export default function StudentBadgesPage() {
   const { profile, loading } = useAuth()
   const [earnedBadges, setEarnedBadges] = useState<UserBadge[]>([])
   const [availableBadges, setAvailableBadges] = useState<BadgeDefinition[]>([])
-  const [badgeStats, setBadgeStats] = useState({ total: 0, byCategory: {} as Record<BadgeCategory, number>, byTier: {} })
+  const [badgeStats, setBadgeStats] = useState<{
+    total: number
+    byCategory: Partial<Record<BadgeCategory, number>>
+    byTier: Partial<Record<BadgeTier, number>>
+  }>({ total: 0, byCategory: {}, byTier: {} })
   const [loadingBadges, setLoadingBadges] = useState(true)
   const [activeTab, setActiveTab] = useState('earned')
 

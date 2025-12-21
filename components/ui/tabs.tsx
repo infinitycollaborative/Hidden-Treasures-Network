@@ -41,30 +41,32 @@ const TabsList = ({ children, className = "", activeTab, handleTabChange }: {
   </div>
 )
 
-const TabsTrigger = ({ value, children, activeTab, handleTabChange }: { 
+const TabsTrigger = ({ value, children, activeTab, handleTabChange, className = "" }: {
   value: string
   children: React.ReactNode
   activeTab?: string
   handleTabChange?: (value: string) => void
+  className?: string
 }) => (
   <button
     type="button"
     className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium transition-all ${
       activeTab === value ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
-    }`}
+    } ${className}`}
     onClick={() => handleTabChange?.(value)}
   >
     {children}
   </button>
 )
 
-const TabsContent = ({ value, children, activeTab }: { 
+const TabsContent = ({ value, children, activeTab, className = "" }: {
   value: string
   children: React.ReactNode
   activeTab?: string
+  className?: string
 }) => {
   if (activeTab !== value) return null
-  return <div className="mt-4">{children}</div>
+  return <div className={`mt-4 ${className}`}>{children}</div>
 }
 
 export { Tabs, TabsList, TabsTrigger, TabsContent }

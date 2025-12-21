@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     // Generate HTML from template if provided
     let emailHtml = html
     if (template && data) {
-      emailHtml = generateEmailFromTemplate(template, data)
+      emailHtml = generateEmailFromTemplate(template, data, html)
     }
 
     if (!emailHtml) {
@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function generateEmailFromTemplate(template: string, data: Record<string, any>): string {
+function generateEmailFromTemplate(template: string, data: Record<string, any>, fallbackHtml?: string): string {
   const baseStyles = `
     <style>
       body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -283,6 +283,6 @@ function generateEmailFromTemplate(template: string, data: Record<string, any>):
       `
 
     default:
-      return html || ''
+      return fallbackHtml || ''
   }
 }
